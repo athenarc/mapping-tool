@@ -1,5 +1,6 @@
 {
   "name": "mapping-tool",
+  "homepage" : "https://app-share3d.imsi.athenarc.gr/mapping-tool",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
