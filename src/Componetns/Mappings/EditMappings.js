@@ -165,7 +165,23 @@ export default class EditMappings extends Component {
         const mapping = this.props.mappings.find(x => x.id == this.props.match.params.id)
         const url = `https://app-share3d.imsi.athenarc.gr:8080/mappings/${mapping.id}/export`
         // getExcel(url, null, `${mapping.label} terms`)
-        window.open(url, '_blank');
+        //window.open(url, '_blank');
+        postData(url, "", 'POST')
+            .then((response) => response.blob())
+            .then((blob) => {
+                const url = window.URL.createObjectURL(new Blob([blob]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `export-${mapping.id}.xls`);
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+            })
+            .catch((error) => {
+                error.json().then((json) => {
+
+                })
+            })
     }
 
 
@@ -233,7 +249,7 @@ export default class EditMappings extends Component {
             : null
 
         return (
-            <React.Fragment>
+            <React.Fragment >
                 <Breadcrumb>
                     <Breadcrumb.Item onClick={() => this.props.history.push('/mappings')}>Home</Breadcrumb.Item>
                     <Breadcrumb.Item>{mapping && mapping.label}</Breadcrumb.Item>
@@ -285,7 +301,7 @@ export default class EditMappings extends Component {
                     </Button>
                     </Modal.Footer>
                 </Modal>
-            </React.Fragment>
+            </React.Fragment >
 
         )
     }
