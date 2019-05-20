@@ -67,7 +67,7 @@ class App extends Component {
         </Navbar>
         <Container className="mt-3">
 
-          <BrowserRouter>
+          <BrowserRouter basename={`${process.env.PUBLIC_URL}`}>
             <Switch>
               <Route exact path="/" component={() => <Redirect to='/mappings' />} />
               <Route exact path="/mappings" {...this.props} component={(props) => <Mappings {...props} mappings={this.state.mappings} updateMappings={this.updateMappings} />} />
