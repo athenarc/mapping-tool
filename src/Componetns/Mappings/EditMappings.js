@@ -55,6 +55,13 @@ export default class EditMappings extends Component {
             redirect: 'follow', // manual, *follow, error
             referrer: 'no-referrer', // no-referrer, *client
             body: data
+        }).then(res => {
+            const url = `https://app-share3d.imsi.athenarc.gr:8080/mappings/${mappingId}/terms`
+            fetchData(url)
+                .then(mappingTerms => this._isMounted && this.setState({ mappingTerms }))
+                .catch(ex => console.log(ex))
+            this.handleCloseModalDrop()
+
         })
 
     }
