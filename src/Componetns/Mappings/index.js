@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Table, Col, Breadcrumb, Row, Modal, Button, Form, Container } from 'react-bootstrap'
-import Dropzone from 'react-dropzone'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faTrashAlt, faCaretRight } from '@fortawesome/free-solid-svg-icons'
@@ -19,7 +18,7 @@ export default class Mappings extends Component {
             providerName: ''
         }
     }
-    //({ mappings, onMappingClick, history }) {
+
 
 
     onSave = () => {
@@ -89,7 +88,7 @@ export default class Mappings extends Component {
                 throw Error(`Failed to create new term. Status: ${res.status}`)
             }).then(mapping => {
                 this.props.updateMappings(mapping)
-                
+
             }).catch(ex => console.log(ex))
         this.handleCloseModal()
     }
@@ -178,18 +177,6 @@ export default class Mappings extends Component {
                                 <Form.Control onChange={(e) => this.handleNewMappingProviderName(e.target.value)} value={this.state.newMapping.providerName} placeholder='Add description' />
                             </Col>
                         </Form.Group>
-                        <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)}>
-                            {({ getRootProps, getInputProps }) => (
-                                <section>
-                                    <div {...getRootProps()}>
-                                        <input {...getInputProps()} />
-                                        <p>Drag 'n' drop some files here, or click to select files</p>
-                                    </div>
-                                </section>
-                            )}
-                        </Dropzone>
-
-
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleCloseModal}>

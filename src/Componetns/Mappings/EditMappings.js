@@ -2,16 +2,12 @@ import React, { Component } from 'react'
 import { Table, Col, Breadcrumb, Row, Modal, Button, Form } from 'react-bootstrap'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSave, faTrashAlt, faDownload } from '@fortawesome/free-solid-svg-icons'
+import { faSave, faTrashAlt, faDownload, faUpload } from '@fortawesome/free-solid-svg-icons'
 import { fetchData, postData, getExcel, downloadURI } from '../../Utils'
 import AsyncSelect from 'react-select/lib/Async';
+import Dropzone from 'react-dropzone'
 
-library.add(faSave, faTrashAlt, faDownload)
-
-
-// DELETE /mappings/{id}/terms/{termId}
-// PUT /mappings/{id}/terms/{termId}
-// POST /mappings/{id}/terms
+library.add(faSave, faTrashAlt, faDownload, faUpload)
 
 export default class EditMappings extends Component {
     _isMounted = false;
@@ -19,11 +15,13 @@ export default class EditMappings extends Component {
     constructor(props) {
         super(props)
         this.handleCloseModal = this.handleCloseModal.bind(this)
+        this.handleCloseModalDrop = this.handleCloseModalDrop.bind(this)
     }
     state = {
         mappingTerms: [],
         isLoading: false,
         showModal: false,
+        showModalDrop: false,
         newTerm: {
             nativeTerm: '',
             aatConceptLabel: '',
@@ -32,6 +30,42 @@ export default class EditMappings extends Component {
         isLoadingTerm: false,
         termOptions: []
 
+    }
+
+
+    onDrop = (files) => {
+        // POST to a test endpoint for demo purposes
+        const mappingId = this.props.match.params.id
+        const url = `https://app-share3d.imsi.athenarc.gr:8080/mappings/${mappingId}/upload`
+
+        var data = new FormData()
+        files.forEach(file => {
+            data.append('file', file, file.name)
+        });
+
+        fetch(url, {
+            method: "POST",
+            mode: 'cors', // no-cors, cors, *same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrer: 'no-referrer', // no-referrer, *client
+            body: data
+        })
+
+    }
+
+
+    handleCloseModalDrop() {
+        this.setState({ showModalDrop: false });
+    }
+
+    handleShowModalDrop() {
+        this.setState({ showModalDrop: true });
     }
 
 
@@ -86,7 +120,7 @@ export default class EditMappings extends Component {
                 if (i === index) {
                     return {
                         ...m,
-                        term: delta.target.value
+                        nativeTerm: delta.target.value
                     }
                 }
                 return m
@@ -164,8 +198,6 @@ export default class EditMappings extends Component {
     downloadExcel() {
         const mapping = this.props.mappings.find(x => x.id == this.props.match.params.id)
         const url = `https://app-share3d.imsi.athenarc.gr:8080/mappings/${mapping.id}/export`
-        // getExcel(url, null, `${mapping.label} terms`)
-        //window.open(url, '_blank');
         postData(url, "", 'POST')
             .then((response) => response.blob())
             .then((blob) => {
@@ -260,7 +292,7 @@ export default class EditMappings extends Component {
                         <tr>
                             <th>Term</th>
                             <th>AAT Subject</th>
-                            <th><Button variant="success" onClick={() => this.handleShowModal()}>Create</Button></th>
+                            <th><Button variant="success" onClick={() => this.handleShowModal()}>Create</Button> <Button variant="primary" onClick={() => this.handleShowModalDrop()}><FontAwesomeIcon icon="upload" size={'sm'} /></Button> </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -301,6 +333,30 @@ export default class EditMappings extends Component {
                     </Button>
                     </Modal.Footer>
                 </Modal>
+
+                <Modal show={this.state.showModalDrop} onHide={this.handleCloseModalDrop}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Upload Excel</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Dropzone onDrop={this.onDrop}>
+                            {({ getRootProps, getInputProps }) => (
+                                <section>
+                                    <div {...getRootProps()}>
+                                        <input {...getInputProps()} />
+                                        <p>Drag 'n' drop some files here, or click to select files</p>
+                                    </div>
+                                </section>
+                            )}
+                        </Dropzone>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.handleCloseModalDrop}>
+                            Close
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
+
             </React.Fragment >
 
         )
