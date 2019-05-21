@@ -49,7 +49,7 @@ export default class EditMappings extends Component {
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             credentials: 'same-origin', // include, *same-origin, omit
             headers: {
-                'Content-Type': 'multipart/form-data',
+                //'Content-Type': 'multipart/form-data',
                 // 'Content-Type': 'application/x-www-form-urlencoded',
             },
             redirect: 'follow', // manual, *follow, error
