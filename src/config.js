@@ -1,4 +1,4 @@
-const BASE_URL = "https://app-share3d.imsi.athenarc.gr:8084"
+export const BASE_URL = "https://app-share3d.imsi.athenarc.gr:8084"
 export const ENDPOINT = {
     AUTH: {
         LOGIN: BASE_URL + '/auth/login',

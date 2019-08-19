@@ -3,10 +3,12 @@ import { Table, Col, Breadcrumb, Row, Modal, Button, Form } from 'react-bootstra
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faTrashAlt, faDownload, faUpload } from '@fortawesome/free-solid-svg-icons'
-import { fetchData, postData, getExcel, downloadURI } from '../../Utils'
+import { fetchData, postData, getExcel, downloadURI, updateData, deleteData } from '../../Utils'
 import AsyncSelect from 'react-select/lib/Async';
 import Dropzone from 'react-dropzone'
-
+import { ENDPOINT, BASE_URL } from '../../config'
+import { TOAST } from '../../Resources';
+import { addToast } from '../../Utils'
 library.add(faSave, faTrashAlt, faDownload, faUpload)
 
 export default class EditMappings extends Component {
@@ -37,33 +39,16 @@ export default class EditMappings extends Component {
     onDrop = (files) => {
         // POST to a test endpoint for demo purposes
         const mappingId = this.props.match.params.id
-        const url = `https://app-share3d.imsi.athenarc.gr:8080/mappings/${mappingId}/upload`
 
         var data = new FormData()
         files.forEach(file => {
             data.append('file', file, file.name)
         });
 
-        fetch(url, {
-            method: "POST",
-            mode: 'cors', // no-cors, cors, *same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: 'same-origin', // include, *same-origin, omit
-            headers: {
-                //'Content-Type': 'multipart/form-data',
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            redirect: 'follow', // manual, *follow, error
-            referrer: 'no-referrer', // no-referrer, *client
-            body: data
-        }).then(res => {
-            const url = `https://app-share3d.imsi.athenarc.gr:8080/mappings/${mappingId}/terms`
-            fetchData(url)
-                .then(mappingTerms => this._isMounted && this.setState({ mappingTerms }))
-                .catch(ex => console.log(ex))
-            this.handleCloseModalDrop()
-
-        })
+        postData(`${ENDPOINT.MAPPINGS}/${mappingId}/upload`, data)
+            .then(mappingTerms => this._isMounted && this.setState({ mappingTerms }))
+            .catch(() => addToast('Failed to upload', TOAST.ERROR))
+        this.handleCloseModalDrop()
 
     }
 
@@ -119,21 +104,16 @@ export default class EditMappings extends Component {
 
     handleSaveNew() {
         const mappingId = this.props.match.params.id
-        const url = `https://app-share3d.imsi.athenarc.gr:8080/mappings/${mappingId}/terms`
+        const url = `${ENDPOINT.MAPPINGS}/${mappingId}/terms`
         postData(url, this.state.newTerm)
-            .then(res => {
-                if (res.ok) {
-                    return res.json()
-                }
-                throw Error(`Failed to create new term. Status: ${res.status}`)
-            }).then(term => {
+            .then(term => {
                 this.setState({
                     mappingTerms: [
                         ...this.state.mappingTerms,
                         term
                     ]
                 })
-            }).catch(ex => console.log(ex))
+            }).catch(() => addToast('Failed to Save term', TOAST.ERROR))
     }
 
     handleChangeTerm(delta, index) {
@@ -155,40 +135,31 @@ export default class EditMappings extends Component {
 
     handleRemoveTerm(termId) {
         const mappingId = this.props.match.params.id
-        const url = `https://app-share3d.imsi.athenarc.gr:8080/mappings/${mappingId}/terms/${termId}`
-        postData(url, [], 'DELETE')
-            .then(res => {
-                if (res.ok) {
-                    const index = this.state.mappingTerms.findIndex(x => x.id === termId)
-                    this.setState({
-                        mappingTerms: [
-                            ...this.state.mappingTerms.slice(0, index),
-                            ...this.state.mappingTerms.slice(index + 1)
-                        ]
-                    })
-                }
-                throw Error(`Failed: ${res.status}`)
-            }).catch(ex => console.log(ex))
+        const url = `${ENDPOINT.MAPPINGS}/${mappingId}/terms/${termId}`
+        deleteData(url)
+            .then(() => {
+                const index = this.state.mappingTerms.findIndex(x => x.id === termId)
+                this.setState({
+                    mappingTerms: [
+                        ...this.state.mappingTerms.slice(0, index),
+                        ...this.state.mappingTerms.slice(index + 1)
+                    ]
+                })
+            }).catch(() => addToast('Failed to delete term', TOAST.ERROR))
 
     }
     handleUpdateTerm(termId) {
         const mappingId = this.props.match.params.id
         const term = this.state.mappingTerms.find(x => x.id === termId)
-        const url = `https://app-share3d.imsi.athenarc.gr:8080/mappings/${mappingId}/terms/${termId}`
-        postData(url, term, 'PUT')
-            .then(res => {
-                if (res.ok) {
-                    console.log('Saved')
-                }
-                throw Error(`Failed: ${res.status}`)
-            }).catch(ex => console.log(ex))
+        const url = `${ENDPOINT.MAPPINGS}/${mappingId}/terms/${termId}`
+        updateData(url, term).catch(() => addToast('Failed to update term', TOAST.ERROR))
 
     }
 
     componentDidMount() {
         this._isMounted = true;
         const mappingId = this.props.match.params.id
-        const url = `https://app-share3d.imsi.athenarc.gr:8080/mappings/${mappingId}/terms`
+        const url = `${ENDPOINT.MAPPINGS}/${mappingId}/terms`
         fetchData(url)
             .then(mappingTerms => this._isMounted && this.setState({ mappingTerms }))
             .catch(ex => console.log(ex))
@@ -219,39 +190,18 @@ export default class EditMappings extends Component {
 
     downloadExcel() {
         const mapping = this.props.mappings.find(x => x.id == this.props.match.params.id)
-        const url = `https://app-share3d.imsi.athenarc.gr:8080/mappings/${mapping.id}/export`
-        postData(url, "", 'POST')
-            .then((response) => response.blob())
-            .then((blob) => {
-                const url = window.URL.createObjectURL(new Blob([blob]));
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', `export-${mapping.id}.xls`);
-                document.body.appendChild(link);
-                link.click();
-                link.parentNode.removeChild(link);
-            })
-            .catch((error) => {
-                error.json().then((json) => {
-
-                })
-            })
+        if (!mapping) return addToast('Mapping not found', TOAST.ERROR)
+        const url = `${ENDPOINT.MAPPINGS}/${mapping.id}/export`
+        getExcel(url, "", 'mapping').catch(() => addToast('Failed to download excel', TOAST.ERROR))
     }
 
+    promiseOptions(inputValue) {
+        postData(`${BASE_URL}/subjects/search?q=${inputValue}`, {}, true)
+            .then(data => this.setState({ termOptions: data }))
+            .catch(() => addToast('Something went wrong', TOAST.ERROR))
+    }
 
     render() {
-
-        const promiseOptions = inputValue =>
-            fetch(`https://app-share3d.imsi.athenarc.gr:8080/subjects/search?q=${inputValue}`, {
-                method: 'POST', // *GET, POST, PUT, DELETE, etc.
-                headers: {
-                    'Content-Type': 'application/json',
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            }).then(res => res.json())
-                .then(data => {
-                    return data
-                })
 
 
         const result = this.state.mappingTerms.map((term, index) => {
@@ -268,7 +218,7 @@ export default class EditMappings extends Component {
                 <td><AsyncSelect
                     defaultValue={defaultValue}
                     onChange={(e) => this.handleEditConceptLabel(e, index)}
-                    loadOptions={promiseOptions} />
+                    loadOptions={this.promiseOptions} />
                 </td>
                 <td>
                     <Button
@@ -340,7 +290,7 @@ export default class EditMappings extends Component {
                                 AAT Subject
                             </Form.Label>
                             <Col sm="10">
-                                <AsyncSelect defaultValue={defaultValue} onChange={(e) => this.handleNewSubjectName(e)} loadOptions={promiseOptions} />
+                                <AsyncSelect defaultValue={defaultValue} onChange={(e) => this.handleNewSubjectName(e)} loadOptions={this.promiseOptions} />
                             </Col>
                         </Form.Group>
                     </Modal.Body>

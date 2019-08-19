@@ -6,6 +6,7 @@ import { faSave, faTrashAlt, faCaretRight } from '@fortawesome/free-solid-svg-ic
 import { postData, addToast } from '../../Utils'
 import * as Resources from '../../Resources'
 import NewMapping from './NewMapping';
+import { ENDPOINT } from '../../config'
 library.add(faSave, faTrashAlt, faCaretRight)
 
 const Mappings = (props) => {
@@ -14,9 +15,8 @@ const Mappings = (props) => {
     const { history, mappings } = props
 
     const onSave = (newMapping) => {
-        const url = `https://app-share3d.imsi.athenarc.gr:8080/mappings`
         setShowModal(false)
-        postData(url, newMapping, true)
+        postData(ENDPOINT.MAPPINGS, newMapping, true)
             .then(mapping => props.updateMappings(mapping))
             .catch(() => addToast('Failed to create mapping', Resources.TOAST.ERROR))
     }

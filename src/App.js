@@ -113,8 +113,8 @@ function App(props) {
         <BrowserRouter basename={`${process.env.PUBLIC_URL}`}>
           <Switch>
             <Route exact path="/" component={() => <Redirect to='/mappings' />} />
-            <PrivateRoute exact path="/mappings" isAuth={isAuth} isLoading={isLoading} {...props} component={(props) => <Mappings {...props} mappings={mappings} updateMappings={updateMappings} />} />
-            <PrivateRoute path="/mappings/:id" {...props} isAuth={isAuth} isLoading={isLoading} component={(props) => <EditMappings {...props} mappings={mappings} />} />
+            <PrivateRoute exact path="/mappings" permissions={[isAuth]} isLoading={isLoading} {...props} component={(props) => <Mappings {...props} mappings={mappings} updateMappings={updateMappings} />} />
+            <PrivateRoute path="/mappings/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditMappings {...props} mappings={mappings} />} />
             <Route path="/login" {...props} component={(props) => <Login  {...props} login={login} isAuth={isAuth} isLoading={isLoading} />} />
             <Route path="/register" {...props} component={(props) => <Register  {...props} register={register} isAuth={isAuth} isLoading={isLoading} />} />
             <Route component={() => <NotFound />} />

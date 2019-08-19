@@ -81,3 +81,33 @@ export const requestAccess = (url, data, credentials) => {
             throw Error(response.statusText)
         })
 }
+
+export const getExcel = (url, data, name) => {
+
+    var currentdate = new Date();
+    var datetime = "Last Sync: " + currentdate.getDate() + "/"
+        + (currentdate.getMonth() + 1) + "/"
+        + currentdate.getFullYear() + " @ "
+        + currentdate.getHours() + ":"
+        + currentdate.getMinutes() + ":"
+        + currentdate.getSeconds();
+
+    return fetch(url, {
+        method: 'POST',
+        mode: "cors",
+        body: JSON.stringify(data),
+        headers: getDefaultHeaders()
+    })
+        .then(function (resp) {
+            return resp.blob();
+        }).then(function (blob) {
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = name + "_" + datetime + ".xlsx";
+            document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+            a.click();
+            a.remove();
+        });
+
+}
