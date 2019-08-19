@@ -22,6 +22,7 @@ export default class EditMappings extends Component {
         isLoading: false,
         showModal: false,
         showModalDrop: false,
+        highlight: false,
         newTerm: {
             nativeTerm: '',
             aatConceptLabel: '',
@@ -64,6 +65,20 @@ export default class EditMappings extends Component {
 
         })
 
+    }
+
+
+    onDragOver(evt) {
+        evt.preventDefault()
+
+        if (this.props.disabled) return
+
+        this.setState({ hightlight: true })
+    }
+
+
+    onDragLeave() {
+        this.setState({ hightlight: false })
     }
 
 
@@ -346,7 +361,11 @@ export default class EditMappings extends Component {
                         <Modal.Title>Upload Excel</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Dropzone onDrop={this.onDrop}>
+                        <Dropzone className={`Dropzone ${this.state.highlight ? 'Highlight' : ''}`}
+                            onDrop={this.onDrop}
+                            onDragOver={this.onDragOver}
+                            onDragLeave={this.onDragLeave}
+                            style={{ cursor: this.props.disabled ? 'default' : 'pointer' }} >
                             {({ getRootProps, getInputProps }) => (
                                 <section>
                                     <div {...getRootProps()}>
