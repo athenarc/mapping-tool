@@ -5,6 +5,12 @@ import * as Resources from './Resources'
  *              Networking    
 *****************************************/
 
+const getMultipartHeaders = (bearer) => {
+    return {
+        //'Content-Type': 'multipart/form-data',
+        'Authorization': bearer ? "Bearer " + getJwtToken() : getJwtToken()
+    }
+}
 const getDefaultHeaders = (bearer) => {
     return {
         "Content-Type": "application/json",
@@ -50,6 +56,29 @@ export const post = (url, data, method = 'POST', readJson = true, bearer = true)
             throw Error(response.statusText);
         })
 }
+
+
+
+export const postUpload = (url, data, readJson = true) => {
+
+    const options = {
+        method: 'POST',
+        mode: "cors",
+        redirect: 'follow', // manual, *follow, error
+        referrer: 'no-referrer', // no-referrer, *client
+        body: data,
+        headers: getMultipartHeaders(true),
+    };
+    return fetch(url, options)
+        .then(response => {
+            if (response.ok) {
+                return readJson ? response.json() : response;
+            }
+            throw Error(response.statusText);
+        })
+}
+
+
 
 const getJwtToken = () => getCredential('token')
 export const getUser = () => getCredential('user')

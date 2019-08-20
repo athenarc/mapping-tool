@@ -3,7 +3,7 @@ import { Table, Col, Breadcrumb, Row, Modal, Button, Form } from 'react-bootstra
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faTrashAlt, faDownload, faUpload } from '@fortawesome/free-solid-svg-icons'
-import { fetchData, postData, getExcel, downloadURI, updateData, deleteData } from '../../Utils'
+import { fetchData, postData, getExcel, downloadURI, updateData, deleteData, postUpload } from '../../Utils'
 import AsyncSelect from 'react-select/lib/Async';
 import Dropzone from 'react-dropzone'
 import { ENDPOINT, BASE_URL } from '../../config'
@@ -18,13 +18,21 @@ export default class EditMappings extends Component {
         super(props)
         this.handleCloseModal = this.handleCloseModal.bind(this)
         this.handleCloseModalDrop = this.handleCloseModalDrop.bind(this)
+        this.onDragOver = this.onDragOver.bind(this)
+
+        this.handleCloseModalDropEDM = this.handleCloseModalDropEDM.bind(this)
+        this.onDragOverEDM = this.onDragOverEDM.bind(this)
     }
     state = {
         mappingTerms: [],
         isLoading: false,
         showModal: false,
         showModalDrop: false,
+        showModalEnrich: false,
+        showModalDropEDM: false,
+        highlightEDM: false,
         highlight: false,
+        enrichDetails: [],
         newTerm: {
             nativeTerm: '',
             aatConceptLabel: '',
@@ -36,6 +44,7 @@ export default class EditMappings extends Component {
     }
 
 
+    /* Excel File : start */
     onDrop = (files) => {
         // POST to a test endpoint for demo purposes
         const mappingId = this.props.match.params.id
@@ -45,7 +54,7 @@ export default class EditMappings extends Component {
             data.append('file', file, file.name)
         });
 
-        postData(`${ENDPOINT.MAPPINGS}/${mappingId}/upload`, data)
+        postUpload(`${ENDPOINT.MAPPINGS}/${mappingId}/upload`, data, true)
             .then(mappingTerms => this._isMounted && this.setState({ mappingTerms }))
             .catch(() => addToast('Failed to upload', TOAST.ERROR))
         this.handleCloseModalDrop()
@@ -74,6 +83,56 @@ export default class EditMappings extends Component {
     handleShowModalDrop() {
         this.setState({ showModalDrop: true });
     }
+    /* Excel File : end */
+
+
+    /* EDM Archive : start */
+
+    onDropEDM = (files) => {
+        // POST to a test endpoint for demo purposes
+        const mappingId = this.props.match.params.id
+
+        var data = new FormData()
+        files.forEach(file => {
+            data.append('file', file, file.name)
+        });
+
+        postUpload(`${ENDPOINT.MAPPINGS}/${mappingId}/enrich`, data, true)
+            .then(enrichDetails => {
+                console.log(enrichDetails)
+                this.setState({ showModalEnrich: true });
+                this.setState({ enrichDetails: enrichDetails });
+                //this.enrichDetails = enrichDetails
+            })//mappingTerms => this._isMounted && this.setState({ mappingTerms }))
+            .catch(() => addToast('Failed to upload', TOAST.ERROR))
+        this.handleCloseModalDropEDM()
+
+    }
+
+
+    onDragOverEDM(evt) {
+        evt.preventDefault()
+
+        if (this.props.disabled) return
+
+        this.setState({ hightlightEDM: true })
+    }
+
+
+    onDragLeaveEDM() {
+        this.setState({ hightlightEDM: false })
+    }
+
+
+    handleCloseModalDropEDM() {
+        this.setState({ showModalDropEDM: false });
+    }
+
+    handleShowModalDropEDM() {
+        this.setState({ showModalDropEDM: true });
+    }
+    /* EDM Archive : end */
+
 
 
     handleCloseModal() {
@@ -195,9 +254,9 @@ export default class EditMappings extends Component {
         getExcel(url, "", 'mapping').catch(() => addToast('Failed to download excel', TOAST.ERROR))
     }
 
-    promiseOptions(inputValue) {
-        postData(`${BASE_URL}/subjects/search?q=${inputValue}`, {}, true)
-            .then(data => this.setState({ termOptions: data }))
+    promiseOptions = (inputValue) => {
+        return postData(`${BASE_URL}/subjects/search?q=${inputValue}`, {}, true)
+            .then(data => data)
             .catch(() => addToast('Something went wrong', TOAST.ERROR))
     }
 
@@ -264,7 +323,11 @@ export default class EditMappings extends Component {
                         <tr>
                             <th>Term</th>
                             <th>AAT Subject</th>
-                            <th><Button variant="success" onClick={() => this.handleShowModal()}>Create</Button> <Button variant="primary" onClick={() => this.handleShowModalDrop()}><FontAwesomeIcon icon="upload" size={'sm'} /></Button> </th>
+                            <th>
+                                <Button variant="success" onClick={() => this.handleShowModal()}>Create</Button> &nbsp;
+                                <Button variant="primary" onClick={() => this.handleShowModalDrop()}><FontAwesomeIcon icon="upload" size={'sm'} /></Button> &nbsp;
+                                <Button variant="primary" onClick={() => this.handleShowModalDropEDM()}><FontAwesomeIcon icon="upload" size={'sm'} /> EDM</Button>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -328,6 +391,53 @@ export default class EditMappings extends Component {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleCloseModalDrop}>
+                            Close
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
+
+
+                <Modal show={this.state.showModalDropEDM} onHide={this.handleCloseModalDropEDM}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Upload EDM Archive</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Dropzone className={`Dropzone ${this.state.highlight ? 'Highlight' : ''}`}
+                            onDrop={this.onDropEDM}
+                            onDragOver={this.onDragOverEDM}
+                            onDragLeave={this.onDragLeaveEDM}
+                            style={{ cursor: this.props.disabled ? 'default' : 'pointer' }} >
+                            {({ getRootProps, getInputProps }) => (
+                                <section>
+                                    <div {...getRootProps()}>
+                                        <input {...getInputProps()} />
+                                        <p>Drag 'n' drop an EDM archive (zip file containing EDM xml files) here, or click to select files</p>
+                                    </div>
+                                </section>
+                            )}
+                        </Dropzone>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.handleCloseModalDropEDM}>
+                            Close
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
+
+
+                <Modal show={this.state.showModalEnrich} onHide={this.handleCloseModalEnrich}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Enrich Details</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        Archive file name: {this.state.enrichDetails.edmArchiveName} <br />
+                        EDM file count: {this.state.enrichDetails.edmFileCount} <br />
+                        Enriched files: {this.state.enrichDetails.enrichedFileCount} <br />
+                        Message: {this.state.enrichDetails.message} <br />
+                        Download Enriched File: <a href={this.state.enrichDetails.enrichedArchiveUrl}>Click here to download</a>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.handleCloseModalEnrich}>
                             Close
                     </Button>
                     </Modal.Footer>
