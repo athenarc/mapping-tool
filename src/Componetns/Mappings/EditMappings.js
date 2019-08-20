@@ -21,6 +21,7 @@ export default class EditMappings extends Component {
         this.onDragOver = this.onDragOver.bind(this)
 
         this.handleCloseModalDropEDM = this.handleCloseModalDropEDM.bind(this)
+        this.handleCloseModalEnrich = this.handleCloseModalEnrich.bind(this)
         this.onDragOverEDM = this.onDragOverEDM.bind(this)
     }
     state = {
@@ -109,7 +110,6 @@ export default class EditMappings extends Component {
 
     }
 
-
     onDragOverEDM(evt) {
         evt.preventDefault()
 
@@ -132,6 +132,19 @@ export default class EditMappings extends Component {
         this.setState({ showModalDropEDM: true });
     }
     /* EDM Archive : end */
+
+
+    /* Enrich details : start */
+
+    handleCloseModalEnrich() {
+        this.setState({ showModalEnrich: false });
+    }
+
+    handleShowModalEnrich() {
+        this.setState({ showModalEnrich: true });
+    }
+
+    /* Enrich details : end */
 
 
 
@@ -399,7 +412,7 @@ export default class EditMappings extends Component {
 
                 <Modal show={this.state.showModalDropEDM} onHide={this.handleCloseModalDropEDM}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Upload EDM Archive</Modal.Title>
+                        <Modal.Title>Enrich an EDM Archive</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Dropzone className={`Dropzone ${this.state.highlight ? 'Highlight' : ''}`}

@@ -30,7 +30,7 @@ function NewMapping({ onClose, onSave, open }) {
                 <Form.Group as={Row} controlId="label">
                     <Form.Label column sm="2">Label</Form.Label>
                     <Col sm="10">
-                        <Form.Control onChange={(e) => updateMappingProp('label', e.target.value)} value={newMapping.label} placeholder='Add label' />
+                        <Form.Control onChange={(e) => updateMappingProp('label', e.target.value)} value={newMapping.label} placeholder='Add title' />
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} controlId="description">
@@ -48,13 +48,13 @@ function NewMapping({ onClose, onSave, open }) {
                 <Form.Group as={Row} controlId="Vocabulary Name">
                     <Form.Label column sm="2">Vocabulary Name</Form.Label>
                     <Col sm="10">
-                        <Form.Control onChange={(e) => updateMappingProp('vocabularyName', e.target.value)} value={newMapping.vocabularyName} placeholder='Add description' />
+                        <Form.Control onChange={(e) => updateMappingProp('vocabularyName', e.target.value)} value={newMapping.vocabularyName} placeholder='Add the name of your vocabulary' />
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} controlId="Provider Name">
                     <Form.Label column sm="2">Provider Name</Form.Label>
                     <Col sm="10">
-                        <Form.Control onChange={(e) => updateMappingProp('providerName', e.target.value)} value={newMapping.providerName} placeholder='Add description' />
+                        <Form.Control onChange={(e) => updateMappingProp('providerName', e.target.value)} value={newMapping.providerName} placeholder='Add the name of your institution' />
                     </Col>
                 </Form.Group>
             </Modal.Body>
