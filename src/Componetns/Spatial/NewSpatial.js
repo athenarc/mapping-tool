@@ -7,7 +7,7 @@ const MappingSchema = {
     vocabularyName: '',
     language: '',
     providerName: '',
-    "type": 'subject'
+    "type": 'spatial'
 }
 
 function NewMapping({ onClose, onSave, open }) {

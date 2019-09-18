@@ -12,7 +12,7 @@ import { TOAST } from '../../Resources';
 import { addToast } from '../../Utils'
 library.add(faSave, faTrashAlt, faDownload, faUpload)
 
-export default class EditMappings extends Component {
+export default class EditSpatial extends Component {
     _isMounted = false;
 
     constructor(props) {
@@ -39,8 +39,8 @@ export default class EditMappings extends Component {
         enrichDetails: [],
         newTerm: {
             nativeTerm: '',
-            aatConceptLabel: '',
-            aatUid: '',
+            geonameName: '',
+            geonameId: '',
             language: 'en'
         },
         isLoadingTerm: false,
@@ -59,7 +59,7 @@ export default class EditMappings extends Component {
             data.append('file', file, file.name)
         });
 
-        postUpload(`${ENDPOINT.MAPPINGS}/${mappingId}/upload`, data, true)
+        postUpload(`${ENDPOINT.SPATIAL_MAPPINGS}/${mappingId}/upload`, data, true)
             .then(mappingTerms => this._isMounted && this.setState({ mappingTerms }))
             .catch(() => addToast('Failed to upload', TOAST.ERROR))
         this.handleCloseModalDrop()
@@ -172,8 +172,8 @@ export default class EditMappings extends Component {
         this.setState({
             newTerm: {
                 ...this.state.newTerm,
-                aatConceptLabel: term.label,
-                aatUid: term.aatUid
+                geonameName: term.label,
+                geonameId: term.geonameId
             }
         })
     }
@@ -189,7 +189,7 @@ export default class EditMappings extends Component {
 
     handleSaveNew() {
         const mappingId = this.props.match.params.id
-        const url = `${ENDPOINT.MAPPINGS}/${mappingId}/terms`
+        const url = `${ENDPOINT.MAPPINGS}/${mappingId}/spatial_terms`
         postData(url, this.state.newTerm)
             .then(term => {
                 this.setState({
@@ -236,7 +236,7 @@ export default class EditMappings extends Component {
 
     handleRemoveTerm(termId) {
         const mappingId = this.props.match.params.id
-        const url = `${ENDPOINT.MAPPINGS}/${mappingId}/terms/${termId}`
+        const url = `${ENDPOINT.MAPPINGS}/${mappingId}/spatial_terms/${termId}`
         deleteData(url)
             .then(() => {
                 const index = this.state.mappingTerms.findIndex(x => x.id === termId)
@@ -284,8 +284,8 @@ export default class EditMappings extends Component {
                     if (index === i) {
                         return {
                             ...term,
-                            aatConceptLabel: editTerm.label,
-                            aatUid: editTerm.aatUid
+                            geonameName: editTerm.label,
+                            geonameId: editTerm.geonameId
                         }
                     }
                     return term
@@ -318,7 +318,7 @@ export default class EditMappings extends Component {
     }
 
     promiseOptions = (inputValue) => {
-        return postData(`${BASE_URL}/subjects/search?q=${inputValue}`, {}, true)
+        return postData(`${BASE_URL}/geonames/search?q=${inputValue}`, {}, true)
             .then(data => data)
             .catch(() => addToast('Something went wrong', TOAST.ERROR))
     }
@@ -329,7 +329,7 @@ export default class EditMappings extends Component {
         const result = this.state.mappingTerms.map((term, index) => {
 
             const defaultValue = {
-                label: term.aatConceptLabel,
+                label: term.geonameName,
                 id: term.id
             }
             const languageOptions = this.state.languages.map(v => ({
@@ -378,10 +378,10 @@ export default class EditMappings extends Component {
 
         const mapping = this.props.mappings.find(x => x.id == this.props.match.params.id)
 
-        const defaultValue = this.state.newTerm.aatConceptLabel
+        const defaultValue = this.state.newTerm.geonameName
             ? {
-                label: this.state.newTerm.aatConceptLabel,
-                id: this.state.newTerm.aatUid
+                label: this.state.newTerm.geonameName,
+                id: this.state.newTerm.geonameId
             }
             : null
 
@@ -394,7 +394,7 @@ export default class EditMappings extends Component {
             <React.Fragment >
                 <Breadcrumb>
                     <Breadcrumb.Item onClick={() => this.props.history.push('/home')}>Home</Breadcrumb.Item>
-                    <Breadcrumb.Item onClick={() => this.props.history.push('/mappings')}>Thematic</Breadcrumb.Item>
+                    <Breadcrumb.Item onClick={() => this.props.history.push('/spatial')}>Spatial</Breadcrumb.Item>
                     <Breadcrumb.Item>{mapping && mapping.label}</Breadcrumb.Item>
                     <Button size={'sm'} onClick={() => this.downloadExcel()} className="ml-3"><FontAwesomeIcon icon="download" size={'sm'} /></Button>
                 </Breadcrumb>
@@ -403,7 +403,7 @@ export default class EditMappings extends Component {
                         <tr>
                             <th>Term</th>
                             <th>Language</th>
-                            <th>AAT Subject</th>
+                            <th>Geoname Term</th>
                             <th>
                                 <Button variant="success" onClick={() => this.handleShowModal()}>Create</Button> &nbsp;
                                 <Button variant="primary" onClick={() => this.handleShowModalDrop()}><FontAwesomeIcon icon="upload" size={'sm'} /></Button> &nbsp;
@@ -441,7 +441,7 @@ export default class EditMappings extends Component {
                         </Form.Group>
                         <Form.Group as={Row} controlId="subject">
                             <Form.Label column sm="2">
-                                AAT Subject
+                                Geonames Term
                             </Form.Label>
                             <Col sm="10">
                                 <AsyncSelect defaultValue={defaultValue} onChange={(e) => this.handleNewSubjectName(e)} loadOptions={this.promiseOptions} />
@@ -453,7 +453,7 @@ export default class EditMappings extends Component {
                             Close
                     </Button>
                         <Button variant="primary"
-                            disabled={!this.state.newTerm.aatConceptLabel || !this.state.newTerm.nativeTerm}
+                            disabled={!this.state.newTerm.geonameName || !this.state.newTerm.nativeTerm}
                             onClick={onSave}>
                             Save Changes
                     </Button>

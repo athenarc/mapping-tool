@@ -11,7 +11,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Mappings from './Componetns/Mappings'
 import EditMappings from './Componetns/Mappings/EditMappings'
-import NotFound from './Componetns/NotFount'
+import Spatial from './Componetns/Spatial'
+import EditSpatial from './Componetns/Spatial/EditSpatial'
+import NotFound from './Componetns/NotFound'
+import Home from './Componetns/Home'
 import Login from './Componetns/Login/Login'
 import Register from './Componetns/Login/Register'
 import { fetchData, addToast, postData, requestAccess, getUser } from './Utils';
@@ -28,7 +31,9 @@ function App(props) {
   const [isAuth, setIsAuth] = useState(false)
   const [user, setUser] = useState(null)
   const [mappings, setMappings] = useState([])
+  const [spatials, setSpatial] = useState([])
   const [isLoadingMappings, setIsLoadingMappings] = useState(false)
+  const [isLoadingSpatial, setIsLoadingSpatial] = useState(false)
   const [languages, setLanguages] = useState([])
   const [isLoadingLanguages, setIsLoadingLanguages] = useState(false)
 
@@ -36,7 +41,7 @@ function App(props) {
     postData(ENDPOINT.AUTH.STATUS, [], false, false)
       .then(() => {
         setIsAuth(true)
-        setIsLoading(false)
+        setIsLoading(true)
         loadLanguages()
         loadMappings()
         setUser(getUser())
@@ -130,11 +135,14 @@ function App(props) {
 
         <BrowserRouter basename={`${process.env.PUBLIC_URL}`}>
           <Switch>
-            <Route exact path="/" component={() => <Redirect to='/mappings' />} />
+            <Route exact path="/" component={() => <Redirect to='/home' />} />
             <PrivateRoute exact path="/mappings" permissions={[isAuth]} isLoading={isLoading} {...props} component={(props) => <Mappings {...props} mappings={mappings} updateMappings={updateMappings} languages={languages} />} />
             <PrivateRoute path="/mappings/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditMappings {...props} mappings={mappings} languages={languages} />} />
+            <PrivateRoute exact path="/spatial" permissions={[isAuth]} isLoading={isLoading} {...props} component={(props) => <Spatial {...props} mappings={mappings} updateMappings={updateMappings} languages={languages} />} />
+            <PrivateRoute path="/spatial/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditSpatial {...props} mappings={mappings} languages={languages} />} />
             <Route path="/login" {...props} component={(props) => <Login  {...props} login={login} isAuth={isAuth} isLoading={isLoading} />} />
             <Route path="/register" {...props} component={(props) => <Register  {...props} register={register} isAuth={isAuth} isLoading={isLoading} />} />
+            <Route path="/home" {...props} component={(props) => <Home  {...props} isAuth={isAuth} isLoading={isLoading} />} />
             <Route component={() => <NotFound />} />
           </Switch>
         </BrowserRouter>

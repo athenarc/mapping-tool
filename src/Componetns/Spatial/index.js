@@ -5,20 +5,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faTrashAlt, faCaretRight } from '@fortawesome/free-solid-svg-icons'
 import { postData, addToast } from '../../Utils'
 import * as Resources from '../../Resources'
-import NewMapping from './NewMapping';
+import NewSpatial from './NewSpatial';
 import { ENDPOINT } from '../../config'
 library.add(faSave, faTrashAlt, faCaretRight)
 
-const Mappings = (props) => {
+const Spatial = (props) => {
 
     const [showModal, setShowModal] = useState(false)
     const { history, mappings, languages } = props
 
-    const onSave = (newMapping) => {
+    const onSave = (newSpatial) => {
         setShowModal(false)
-        postData(ENDPOINT.MAPPINGS, newMapping, true)
+        postData(ENDPOINT.SPATIAL_MAPPINGS, newSpatial, true)
             .then(mapping => props.updateMappings(mapping))
-            .catch(() => addToast('Failed to create mapping', Resources.TOAST.ERROR))
+            .catch(() => addToast('Failed to create spatial mapping', Resources.TOAST.ERROR))
     }
 
     const mappingsTable = () => (
@@ -46,7 +46,7 @@ const Mappings = (props) => {
             <td>{mapping.language}</td>
             <td>{mapping.vocabularyName}</td>
             <td>{mapping.providerName}</td>
-            <td><Button onClick={() => history.push(`/mappings/${mapping.id}`)}><FontAwesomeIcon icon="caret-right" /></Button></td>
+            <td><Button onClick={() => history.push(`/spatial/${mapping.id}`)}><FontAwesomeIcon icon="caret-right" /></Button></td>
         </tr>
     })
 
@@ -54,14 +54,14 @@ const Mappings = (props) => {
         <React.Fragment>
             <Breadcrumb>
                 <Breadcrumb.Item onClick={() => props.history.push('/home')}>Home</Breadcrumb.Item>
-                <Breadcrumb.Item onClick={() => props.history.push('/mappings')}>Thematic</Breadcrumb.Item>
+                <Breadcrumb.Item onClick={() => props.history.push('/spatial')}>Spatial</Breadcrumb.Item>
             </Breadcrumb>
             {mappingsTable()}
-            <NewMapping onSave={onSave} onClose={() => setShowModal(false)} open={showModal} />
+            <NewSpatial onSave={onSave} onClose={() => setShowModal(false)} open={showModal} />
 
         </React.Fragment>
     )
 
 }
 
-export default Mappings
+export default Spatial

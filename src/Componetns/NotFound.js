@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function NotFount({ma}) {
+export default function NotFound({ ma }) {
     return (
         <div>
-            Not Fount
+            Not Found
     </div>
     )
 }

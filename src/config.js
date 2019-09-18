@@ -7,5 +7,6 @@ export const ENDPOINT = {
         SIGNUP: BASE_URL + '/auth/signup',
     },
     MAPPINGS: BASE_URL + '/mappings',
+    SPATIAL_MAPPINGS: BASE_URL + '/mappings',
     LANGUAGES: BASE_URL + '/languages'
 }
