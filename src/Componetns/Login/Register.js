@@ -1,6 +1,7 @@
 import React, { useState, Fragment } from 'react'
 import { Card, Button, Form } from 'react-bootstrap'
 import { Redirect } from 'react-router-dom'
+import backgroundImage from '../../assets/background.jpg';
 
 const FormSchema = {
     username: "",
@@ -65,11 +66,20 @@ function Register(props) {
 
 const styles = {
     container: {
-        height: '1005',
+        height: '100vh',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
         display: 'flex',
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
     },
     link: {
         fontSize: 12,

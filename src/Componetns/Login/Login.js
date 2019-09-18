@@ -1,6 +1,7 @@
 import React, { useState, Fragment } from 'react'
 import { Card, Button, Form } from 'react-bootstrap'
 import { Redirect } from 'react-router-dom'
+import backgroundImage from '../../assets/background.jpg';
 
 function Login(props) {
 
@@ -50,7 +51,12 @@ const styles = {
         display: 'flex',
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
     },
     link: {
         fontSize: 12,

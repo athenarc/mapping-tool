@@ -18,6 +18,7 @@ import { fetchData, addToast, postData, requestAccess, getUser } from './Utils';
 import { ENDPOINT } from './config'
 import * as Resourses from './Resources'
 import PrivateRoute from './Auth/privateRoute';
+
 const md5 = require('md5');
 
 
@@ -28,12 +29,15 @@ function App(props) {
   const [user, setUser] = useState(null)
   const [mappings, setMappings] = useState([])
   const [isLoadingMappings, setIsLoadingMappings] = useState(false)
+  const [languages, setLanguages] = useState([])
+  const [isLoadingLanguages, setIsLoadingLanguages] = useState(false)
 
   useEffect(() => {
     postData(ENDPOINT.AUTH.STATUS, [], false, false)
       .then(() => {
         setIsAuth(true)
         setIsLoading(false)
+        loadLanguages()
         loadMappings()
         setUser(getUser())
       })
@@ -53,6 +57,20 @@ function App(props) {
       .catch(() => {
         addToast('Failed to load mappings', Resourses.TOAST.ERROR)
         setIsLoadingMappings(false)
+      })
+  }
+
+
+  const loadLanguages = () => {
+    setIsLoadingLanguages(true)
+    fetchData(ENDPOINT.LANGUAGES)
+      .then(languages => {
+        setLanguages(languages)
+        setIsLoadingLanguages(false)
+      })
+      .catch(() => {
+        addToast('Failed to load languages', Resourses.TOAST.ERROR)
+        setIsLoadingLanguages(false)
       })
   }
 
@@ -96,7 +114,7 @@ function App(props) {
   return (
     <React.Fragment>
       <ToastContainer position={toast.POSITION.BOTTOM_RIGHT} />
-      <Navbar bg="light">
+      <Navbar bg="light" style={styles.navBar}>
         <Navbar.Brand>Europeana Archaeology Mapping Tool</Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
@@ -113,8 +131,8 @@ function App(props) {
         <BrowserRouter basename={`${process.env.PUBLIC_URL}`}>
           <Switch>
             <Route exact path="/" component={() => <Redirect to='/mappings' />} />
-            <PrivateRoute exact path="/mappings" permissions={[isAuth]} isLoading={isLoading} {...props} component={(props) => <Mappings {...props} mappings={mappings} updateMappings={updateMappings} />} />
-            <PrivateRoute path="/mappings/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditMappings {...props} mappings={mappings} />} />
+            <PrivateRoute exact path="/mappings" permissions={[isAuth]} isLoading={isLoading} {...props} component={(props) => <Mappings {...props} mappings={mappings} updateMappings={updateMappings} languages={languages} />} />
+            <PrivateRoute path="/mappings/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditMappings {...props} mappings={mappings} languages={languages} />} />
             <Route path="/login" {...props} component={(props) => <Login  {...props} login={login} isAuth={isAuth} isLoading={isLoading} />} />
             <Route path="/register" {...props} component={(props) => <Register  {...props} register={register} isAuth={isAuth} isLoading={isLoading} />} />
             <Route component={() => <NotFound />} />
@@ -124,6 +142,12 @@ function App(props) {
     </React.Fragment>
 
   );
+}
+
+const styles = {
+  navBar: {
+    zIndex: 1000
+  }
 }
 
 export default App;

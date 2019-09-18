@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Table, Col, Breadcrumb, Row, Modal, Button, Form } from 'react-bootstrap'
+import Select from 'react-select';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faTrashAlt, faDownload, faUpload } from '@fortawesome/free-solid-svg-icons'
@@ -23,9 +24,11 @@ export default class EditMappings extends Component {
         this.handleCloseModalDropEDM = this.handleCloseModalDropEDM.bind(this)
         this.handleCloseModalEnrich = this.handleCloseModalEnrich.bind(this)
         this.onDragOverEDM = this.onDragOverEDM.bind(this)
+
     }
     state = {
         mappingTerms: [],
+        languages: [],
         isLoading: false,
         showModal: false,
         showModalDrop: false,
@@ -37,7 +40,8 @@ export default class EditMappings extends Component {
         newTerm: {
             nativeTerm: '',
             aatConceptLabel: '',
-            aatUid: ''
+            aatUid: '',
+            language: 'en'
         },
         isLoadingTerm: false,
         termOptions: []
@@ -174,6 +178,15 @@ export default class EditMappings extends Component {
         })
     }
 
+    handleNewTermLanguage(language) {
+        this.setState({
+            newTerm: {
+                ...this.state.newTerm,
+                language: language
+            }
+        })
+    }
+
     handleSaveNew() {
         const mappingId = this.props.match.params.id
         const url = `${ENDPOINT.MAPPINGS}/${mappingId}/terms`
@@ -189,6 +202,22 @@ export default class EditMappings extends Component {
     }
 
     handleChangeTerm(delta, index) {
+        this.setState({
+            mappingTerms: this.state.mappingTerms.map((m, i) => {
+                if (i === index) {
+                    return {
+                        ...m,
+                        nativeTerm: delta.target.value
+                    }
+                }
+                return m
+            })
+        })
+
+    }
+
+
+    handleChangeLanguage(delta, index) {
         this.setState({
             mappingTerms: this.state.mappingTerms.map((m, i) => {
                 if (i === index) {
@@ -235,7 +264,13 @@ export default class EditMappings extends Component {
         fetchData(url)
             .then(mappingTerms => this._isMounted && this.setState({ mappingTerms }))
             .catch(ex => console.log(ex))
+
+        const languagesUrl = `${ENDPOINT.LANGUAGES}`
+        fetchData(languagesUrl)
+            .then(languages => this.setState({ languages }))
+            .catch(ex => console.log(ex))
     }
+
 
     componentWillUnmount() {
         this._isMounted = false;
@@ -257,7 +292,22 @@ export default class EditMappings extends Component {
                 })
             ]
         })
+    }
 
+    handleChangeLanguage(language, index) {
+        this.setState({
+            mappingTerms: [
+                ...this.state.mappingTerms.map((term, i) => {
+                    if (index === i) {
+                        return {
+                            ...term,
+                            language: language
+                        }
+                    }
+                    return term
+                })
+            ]
+        })
     }
 
     downloadExcel() {
@@ -282,13 +332,24 @@ export default class EditMappings extends Component {
                 label: term.aatConceptLabel,
                 id: term.id
             }
+            const languageOptions = this.state.languages.map(v => ({
+                label: v.name,
+                value: v.iso639_1
+            }))
+
             return <tr key={term.id}>
                 <td><Form.Control
                     value={term.nativeTerm}
                     onChange={(e) => this.handleChangeTerm(e, index)} />
                 </td>
+                <td>
+                    <Select options={languageOptions}
+                        value={languageOptions.find(x => x.value == term.language)}
+                        onChange={(e) => this.handleChangeLanguage(e.value, index)} />
+                </td>
                 <td><AsyncSelect
                     defaultValue={defaultValue}
+                    size="15"
                     onChange={(e) => this.handleEditConceptLabel(e, index)}
                     loadOptions={this.promiseOptions} />
                 </td>
@@ -324,6 +385,11 @@ export default class EditMappings extends Component {
             }
             : null
 
+        const languageOptions = this.state.languages.map(v => ({
+            label: v.name,
+            value: v.iso639_1
+        }))
+
         return (
             <React.Fragment >
                 <Breadcrumb>
@@ -335,6 +401,7 @@ export default class EditMappings extends Component {
                     <thead>
                         <tr>
                             <th>Term</th>
+                            <th>Language</th>
                             <th>AAT Subject</th>
                             <th>
                                 <Button variant="success" onClick={() => this.handleShowModal()}>Create</Button> &nbsp;
@@ -359,6 +426,16 @@ export default class EditMappings extends Component {
                             </Form.Label>
                             <Col sm="10">
                                 <Form.Control onChange={(e) => this.handleNewTermName(e.target.value)} value={this.state.newTerm.nativeTerm} placeholder='Add Term' />
+                            </Col>
+                        </Form.Group>
+                        <Form.Group as={Row} controlId="language">
+                            <Form.Label column sm="2">
+                                Language
+                            </Form.Label>
+                            <Col sm="10">
+                                <Select options={languageOptions}
+                                    value={languageOptions.find(x => x.value == this.state.newTerm.language)}
+                                    onChange={(e) => this.handleNewTermLanguage(e.value)} />
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row} controlId="subject">

@@ -12,7 +12,7 @@ library.add(faSave, faTrashAlt, faCaretRight)
 const Mappings = (props) => {
 
     const [showModal, setShowModal] = useState(false)
-    const { history, mappings } = props
+    const { history, mappings, languages } = props
 
     const onSave = (newMapping) => {
         setShowModal(false)
