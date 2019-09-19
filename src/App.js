@@ -136,13 +136,13 @@ function App(props) {
         <BrowserRouter basename={`${process.env.PUBLIC_URL}`}>
           <Switch>
             <Route exact path="/" component={() => <Redirect to='/home' />} />
-            <PrivateRoute exact path="/mappings" permissions={[isAuth]} isLoading={isLoading} {...props} component={(props) => <Mappings {...props} mappings={mappings} updateMappings={updateMappings} languages={languages} />} />
-            <PrivateRoute path="/mappings/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditMappings {...props} mappings={mappings} languages={languages} />} />
-            <PrivateRoute exact path="/spatial" permissions={[isAuth]} isLoading={isLoading} {...props} component={(props) => <Spatial {...props} mappings={mappings} updateMappings={updateMappings} languages={languages} />} />
-            <PrivateRoute path="/spatial/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditSpatial {...props} mappings={mappings} languages={languages} />} />
+            <PrivateRoute exact path="/mappings" permissions={[isAuth]} isLoading={isLoading} {...props} component={(props) => <Mappings {...props} mappings={mappings.filter(x => x.type === 'subject')} updateMappings={updateMappings} languages={languages} />} />
+            <PrivateRoute path="/mappings/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditMappings {...props} mappings={mappings.filter(x => x.type === 'subject')} languages={languages} />} />
+            <PrivateRoute exact path="/spatial" permissions={[isAuth]} isLoading={isLoading} {...props} component={(props) => <Spatial {...props} mappings={mappings.filter(x => x.type === 'spatial')} updateMappings={updateMappings} languages={languages} />} />
+            <PrivateRoute path="/spatial/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditSpatial {...props} mappings={mappings.filter(x => x.type === 'spatial')} languages={languages} />} />
             <Route path="/login" {...props} component={(props) => <Login  {...props} login={login} isAuth={isAuth} isLoading={isLoading} />} />
             <Route path="/register" {...props} component={(props) => <Register  {...props} register={register} isAuth={isAuth} isLoading={isLoading} />} />
-            <Route path="/home" {...props} component={(props) => <Home  {...props} isAuth={isAuth} isLoading={isLoading} />} />
+            <PrivateRoute path="/home" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <Home  {...props} />} />
             <Route component={() => <NotFound />} />
           </Switch>
         </BrowserRouter>
