@@ -260,7 +260,7 @@ export default class EditSpatial extends Component {
     componentDidMount() {
         this._isMounted = true;
         const mappingId = this.props.match.params.id
-        const url = `${ENDPOINT.MAPPINGS}/${mappingId}/terms`
+        const url = `${ENDPOINT.MAPPINGS}/${mappingId}/spatial_terms`
         fetchData(url)
             .then(mappingTerms => this._isMounted && this.setState({ mappingTerms }))
             .catch(ex => console.log(ex))
