@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Table, Breadcrumb, Button } from 'react-bootstrap'
+import { Table, Breadcrumb, Button, Container } from 'react-bootstrap'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faTrashAlt, faCaretRight } from '@fortawesome/free-solid-svg-icons'
@@ -7,6 +7,7 @@ import { postData, addToast } from '../../Utils'
 import * as Resources from '../../Resources'
 import NewMapping from './NewMapping';
 import { ENDPOINT } from '../../config'
+import backgroundSpatial from '../../assets/backgroundSpatial.jpg'
 library.add(faSave, faTrashAlt, faCaretRight)
 
 const Mappings = (props) => {
@@ -58,10 +59,20 @@ const Mappings = (props) => {
             </Breadcrumb>
             {mappingsTable()}
             <NewMapping onSave={onSave} onClose={() => setShowModal(false)} open={showModal} />
-
         </React.Fragment>
     )
 
+}
+
+const styles = {
+    container: {
+        height: '100vh',
+        width: '100%',
+        backgroundImage: `url(${backgroundSpatial})`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
+    }
 }
 
 export default Mappings

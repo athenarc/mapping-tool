@@ -2,6 +2,9 @@ import React, { useState, Fragment } from 'react'
 import { Card, Button, Form } from 'react-bootstrap'
 import { Redirect } from 'react-router-dom'
 import backgroundImage from '../../assets/background.jpg';
+import backgroundThematic from '../../assets/backgroundThematic.jpg';
+import backgroundSpatial from '../../assets/backgroundSpatial.jpg';
+import backgroundTemporal from '../../assets/backgroundTemporal.jpg';
 
 function Home(props) {
 
@@ -10,19 +13,19 @@ function Home(props) {
 
     const homeCards = () => (
         <div style={styles.container}>
-            <Card onClick={() => props.history.push('/mappings')} style={{ width: '20rem', height: '20rem', margin: '12px' }}>
+            <Card onClick={() => props.history.push('/mappings')} style={styles.backThematic}>
                 <Card.Body>
                     <Card.Title className="text-center">Thematic Mappings</Card.Title>
                 </Card.Body>
             </Card>
 
-            <Card onClick={() => props.history.push('/spatial')} style={{ width: '20rem', height: '20rem', margin: '12px' }}>
+            <Card onClick={() => props.history.push('/spatial')} style={styles.backSpatial}>
                 <Card.Body>
                     <Card.Title className="text-center">Spatial Mappings</Card.Title>
                 </Card.Body>
             </Card>
 
-            <Card style={{ width: '20rem', height: '20rem', margin: '12px' }}>
+            <Card style={styles.backTemporal} >
                 <Card.Body>
                     <Card.Title className="text-center">Temporal Mappings</Card.Title>
                 </Card.Body>
@@ -53,6 +56,27 @@ const styles = {
         justifyContent: 'center',
 
         backgroundImage: `url(${backgroundImage})`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
+    },
+    backThematic: {
+        width: '20rem', height: '20rem', margin: '12px',
+        backgroundImage: `url(${backgroundThematic})`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
+    },
+    backSpatial: {
+        width: '20rem', height: '20rem', margin: '12px',
+        backgroundImage: `url(${backgroundSpatial})`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
+    },
+    backTemporal: {
+        width: '20rem', height: '20rem', margin: '12px',
+        backgroundImage: `url(${backgroundTemporal})`,
         backgroundPosition: 'center',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat'

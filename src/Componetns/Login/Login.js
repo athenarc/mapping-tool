@@ -12,7 +12,8 @@ function Login(props) {
         <div style={styles.container}>
             <Card style={{ width: '25rem' }}>
                 <Card.Body>
-                    <Card.Title className="text-center">Welcome back</Card.Title>
+                    <Card.Title className="text-center">Login</Card.Title>
+
                     <Form.Group controlId="formBasicEmail">
                         <Form.Label>Email address</Form.Label>
                         <Form.Control type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter email" />

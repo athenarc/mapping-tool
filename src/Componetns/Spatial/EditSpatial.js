@@ -20,17 +20,21 @@ export default class EditSpatial extends Component {
         this.handleCloseModal = this.handleCloseModal.bind(this)
         this.handleCloseModalDrop = this.handleCloseModalDrop.bind(this)
         this.onDragOver = this.onDragOver.bind(this)
+        this.updateMappingProp = this.updateMappingProp.bind(this)
 
         this.handleCloseModalDropEDM = this.handleCloseModalDropEDM.bind(this)
         this.handleCloseModalEnrich = this.handleCloseModalEnrich.bind(this)
         this.onDragOverEDM = this.onDragOverEDM.bind(this)
-
+        this.handleCloseModalEdit = this.handleCloseModalEdit.bind(this)
+        this.handleCloseModalDelete = this.handleCloseModalDelete.bind(this)
     }
     state = {
         mappingTerms: [],
         languages: [],
         isLoading: false,
         showModal: false,
+        showModalEdit: false,
+        showModalDelete: false,
         showModalDrop: false,
         showModalEnrich: false,
         showModalDropEDM: false,
@@ -43,10 +47,33 @@ export default class EditSpatial extends Component {
             geonameId: '',
             language: 'en'
         },
+        mappingSchema: {
+            id: null,
+            label: '',
+            description: '',
+            vocabularyName: '',
+            language: '',
+            providerName: '',
+            "type": 'spatial'
+        },
         isLoadingTerm: false,
         termOptions: []
 
     }
+
+
+
+    loadMappingMetadata = () => {
+        const mappingId = this.props.match.params.id
+        fetchData(`${ENDPOINT.SPATIAL_MAPPINGS}/${mappingId}`)
+            .then(mappingSchema => {
+                this.setState({ mappingSchema })
+            })
+            .catch(() => {
+                addToast('Failed to load mapping', TOAST.ERROR)
+            })
+    }
+
 
 
     /* Excel File : start */
@@ -59,7 +86,7 @@ export default class EditSpatial extends Component {
             data.append('file', file, file.name)
         });
 
-        postUpload(`${ENDPOINT.SPATIAL_MAPPINGS}/${mappingId}/upload`, data, true)
+        postUpload(`${ENDPOINT.SPATIAL_MAPPINGS}/${mappingId}/upload_spatial`, data, true)
             .then(mappingTerms => this._isMounted && this.setState({ mappingTerms }))
             .catch(() => addToast('Failed to upload', TOAST.ERROR))
         this.handleCloseModalDrop()
@@ -87,6 +114,22 @@ export default class EditSpatial extends Component {
 
     handleShowModalDrop() {
         this.setState({ showModalDrop: true });
+    }
+
+    handleShowModalEdit() {
+        this.setState({ showModalEdit: true });
+    }
+
+    handleCloseModalEdit() {
+        this.setState({ showModalEdit: false });
+    }
+
+    handleShowModalDelete() {
+        this.setState({ showModalDelete: true });
+    }
+
+    handleCloseModalDelete() {
+        this.setState({ showModalDelete: false });
     }
     /* Excel File : end */
 
@@ -269,6 +312,8 @@ export default class EditSpatial extends Component {
         fetchData(languagesUrl)
             .then(languages => this.setState({ languages }))
             .catch(ex => console.log(ex))
+
+        this.loadMappingMetadata()
     }
 
 
@@ -310,6 +355,7 @@ export default class EditSpatial extends Component {
         })
     }
 
+
     downloadExcel() {
         const mapping = this.props.mappings.find(x => x.id == this.props.match.params.id)
         if (!mapping) return addToast('Mapping not found', TOAST.ERROR)
@@ -323,9 +369,14 @@ export default class EditSpatial extends Component {
             .catch(() => addToast('Something went wrong', TOAST.ERROR))
     }
 
+    updateMappingProp = (prop, value) => {
+        this.setState({
+            mappingSchema:
+                { ...this.state.mappingSchema, [prop]: value }
+        })
+    }
+
     render() {
-
-
         const result = this.state.mappingTerms.map((term, index) => {
 
             const defaultValue = {
@@ -357,7 +408,7 @@ export default class EditSpatial extends Component {
                     <Button
                         variant="success"
                         className="mx-1"
-                        disabled={!term.aatConceptLabel || !term.nativeTerm}
+                        disabled={!term.geonameName || !term.nativeTerm}
                         onClick={() => this.handleUpdateTerm(term.id)}>
                         <FontAwesomeIcon icon="save" />
                     </Button>
@@ -374,6 +425,26 @@ export default class EditSpatial extends Component {
         const onSave = () => {
             this.handleCloseModal()
             this.handleSaveNew()
+        }
+
+
+        const onSaveMappingMetadata = (mappingMetadata) => {
+            this.handleCloseModalEdit()
+            const mappingId = this.props.match.params.id
+            updateData(`${ENDPOINT.SPATIAL_MAPPINGS}/${mappingId}`, mappingMetadata, true)
+                .then(mappingSchema => this.setState({ mappingSchema }))
+                .catch(() => addToast('Failed to create spatial mapping', TOAST.ERROR))
+        }
+
+        const onDeleteMapping = () => {
+            const mappingId = this.props.match.params.id
+            deleteData(`${ENDPOINT.MAPPINGS}/${mappingId}`, true)
+                .then(() => {
+                    this.handleCloseModalEdit()
+                    this.props.history.push('/mappings')
+                    this.props.handleRemoveMapping(mappingId)
+                })
+                .catch(() => addToast('Failed to create spatial mapping', TOAST.ERROR))
         }
 
         const mapping = this.props.mappings.find(x => x.id == this.props.match.params.id)
@@ -396,7 +467,9 @@ export default class EditSpatial extends Component {
                     <Breadcrumb.Item onClick={() => this.props.history.push('/home')}>Home</Breadcrumb.Item>
                     <Breadcrumb.Item onClick={() => this.props.history.push('/spatial')}>Spatial</Breadcrumb.Item>
                     <Breadcrumb.Item>{mapping && mapping.label}</Breadcrumb.Item>
-                    <Button size={'sm'} onClick={() => this.downloadExcel()} className="ml-3"><FontAwesomeIcon icon="download" size={'sm'} /></Button>
+                    <Button size={'sm'} onClick={() => this.downloadExcel()} className="ml-3"><FontAwesomeIcon icon="download" size={'sm'} /> Download Mapping</Button>
+                    <Button size={'sm'} onClick={() => this.handleShowModalEdit()} variant="success" className="ml-3"><FontAwesomeIcon icon="save" size={'sm'} /> Edit Mapping</Button>
+                    <Button size={'sm'} onClick={() => this.handleShowModalDelete()} variant="danger" className="ml-3"><FontAwesomeIcon icon="trash-alt" size={'sm'} /> Delete Mapping</Button>
                 </Breadcrumb>
                 <Table>
                     <thead>
@@ -534,7 +607,73 @@ export default class EditSpatial extends Component {
                     </Modal.Footer>
                 </Modal>
 
-            </React.Fragment >
+
+
+                <Modal show={this.state.showModalEdit} onHide={this.handleCloseModalEdit}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Edit Mapping</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form.Group as={Row} controlId="label">
+                            <Form.Label column sm="2">Label</Form.Label>
+                            <Col sm="10">
+                                <Form.Control onChange={(e) => this.updateMappingProp('label', e.target.value)} value={this.state.mappingSchema.label} placeholder='Add title' />
+                            </Col>
+                        </Form.Group>
+                        <Form.Group as={Row} controlId="description">
+                            <Form.Label column sm="2">Description</Form.Label>
+                            <Col sm="10">
+                                <Form.Control onChange={(e) => this.updateMappingProp('description', e.target.value)} value={this.state.mappingSchema.description} placeholder='Add description' />
+                            </Col>
+                        </Form.Group>
+                        <Form.Group as={Row} controlId="language">
+                            <Form.Label column sm="2">Language</Form.Label>
+                            <Col sm="10">
+                                <Form.Control onChange={(e) => this.updateMappingProp('language', e.target.value)} value={this.state.mappingSchema.language} placeholder='Add description' />
+                            </Col>
+                        </Form.Group>
+                        <Form.Group as={Row} controlId="Vocabulary Name">
+                            <Form.Label column sm="2">Vocabulary Name</Form.Label>
+                            <Col sm="10">
+                                <Form.Control onChange={(e) => this.updateMappingProp('vocabularyName', e.target.value)} value={this.state.mappingSchema.vocabularyName} placeholder='Add the name of your vocabulary' />
+                            </Col>
+                        </Form.Group>
+                        <Form.Group as={Row} controlId="Provider Name">
+                            <Form.Label column sm="2">Provider Name</Form.Label>
+                            <Col sm="10">
+                                <Form.Control onChange={(e) => this.updateMappingProp('providerName', e.target.value)} value={this.state.mappingSchema.providerName} placeholder='Add the name of your institution' />
+                            </Col>
+                        </Form.Group>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.handleCloseModalEdit}>
+                            Close
+                        </Button>
+                        <Button variant="primary" onClick={() => onSaveMappingMetadata(this.state.mappingSchema)}>
+                            Save Changes
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+
+                <Modal show={this.state.showModalDelete} onHide={this.handleCloseModalDelete}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirm delete</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        Confirm delete this mapping and all of it's contents ?
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.handleCloseModalDelete}>
+                            Close
+                    </Button>
+                        <Button variant="danger" onClick={() => onDeleteMapping()}>
+                            Delete
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
+
+            </React.Fragment>
 
         )
     }

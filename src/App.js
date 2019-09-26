@@ -66,6 +66,10 @@ function App(props) {
   }
 
 
+  const handleRemoveMapping = (mappingId) => {
+    setMappings(mappings.filter(x => x.id !== mappingId))
+  }
+
   const loadLanguages = () => {
     setIsLoadingLanguages(true)
     fetchData(ENDPOINT.LANGUAGES)
@@ -137,9 +141,9 @@ function App(props) {
           <Switch>
             <Route exact path="/" component={() => <Redirect to='/home' />} />
             <PrivateRoute exact path="/mappings" permissions={[isAuth]} isLoading={isLoading} {...props} component={(props) => <Mappings {...props} mappings={mappings.filter(x => x.type === 'subject')} updateMappings={updateMappings} languages={languages} />} />
-            <PrivateRoute path="/mappings/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditMappings {...props} mappings={mappings.filter(x => x.type === 'subject')} languages={languages} />} />
+            <PrivateRoute path="/mappings/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditMappings {...props} mappings={mappings.filter(x => x.type === 'subject')} languages={languages} handleRemoveMapping={handleRemoveMapping} />} />
             <PrivateRoute exact path="/spatial" permissions={[isAuth]} isLoading={isLoading} {...props} component={(props) => <Spatial {...props} mappings={mappings.filter(x => x.type === 'spatial')} updateMappings={updateMappings} languages={languages} />} />
-            <PrivateRoute path="/spatial/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditSpatial {...props} mappings={mappings.filter(x => x.type === 'spatial')} languages={languages} />} />
+            <PrivateRoute path="/spatial/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditSpatial {...props} mappings={mappings.filter(x => x.type === 'spatial')} languages={languages} handleRemoveMapping={handleRemoveMapping} />} />
             <Route path="/login" {...props} component={(props) => <Login  {...props} login={login} isAuth={isAuth} isLoading={isLoading} />} />
             <Route path="/register" {...props} component={(props) => <Register  {...props} register={register} isAuth={isAuth} isLoading={isLoading} />} />
             <PrivateRoute path="/home" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <Home  {...props} />} />
