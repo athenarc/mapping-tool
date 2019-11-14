@@ -463,9 +463,18 @@ export default class EditMappings extends Component {
             value: v.iso639_1
         }))
 
+
+        const styles = {
+            containerCard: {
+                backgroundColor: 'white',
+                margin: '12px',
+                boxShadow: '5px 5px 5px 0px rgba(0,0,0,0.75)',
+            }
+        }
+
         return (
             <React.Fragment >
-                <Breadcrumb>
+                <Breadcrumb style={styles.containerCard }>
                     <Breadcrumb.Item onClick={() => this.props.history.push('/home')}>Home</Breadcrumb.Item>
                     <Breadcrumb.Item onClick={() => this.props.history.push('/mappings')}>Thematic</Breadcrumb.Item>
                     <Breadcrumb.Item>{mapping && mapping.label}</Breadcrumb.Item>
@@ -473,23 +482,25 @@ export default class EditMappings extends Component {
                     <Button size={'sm'} onClick={() => this.handleShowModalEdit()} variant="success" className="ml-3"><FontAwesomeIcon icon="save" size={'sm'} /> Edit Mapping</Button>
                     <Button size={'sm'} onClick={() => this.handleShowModalDelete()} variant="danger" className="ml-3"><FontAwesomeIcon icon="trash-alt" size={'sm'} /> Delete Mapping</Button>
                 </Breadcrumb>
-                <Table>
-                    <thead>
-                        <tr>
-                            <th>Term</th>
-                            <th>Language</th>
-                            <th>AAT Subject</th>
-                            <th>
-                                <Button variant="success" onClick={() => this.handleShowModal()}>Create</Button> &nbsp;
-                                <Button variant="primary" onClick={() => this.handleShowModalDrop()}><FontAwesomeIcon icon="upload" size={'sm'} /></Button> &nbsp;
-                                <Button variant="primary" onClick={() => this.handleShowModalDropEDM()}><FontAwesomeIcon icon="upload" size={'sm'} /> EDM</Button>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {result}
-                    </tbody>
-                </Table>
+                <div style={styles.containerCard}>
+                    <Table>
+                        <thead>
+                            <tr>
+                                <th>Term</th>
+                                <th>Language</th>
+                                <th>AAT Subject</th>
+                                <th>
+                                    <Button variant="success" onClick={() => this.handleShowModal()}>Create</Button> &nbsp;
+                                    <Button variant="primary" onClick={() => this.handleShowModalDrop()}><FontAwesomeIcon icon="upload" size={'sm'} /></Button> &nbsp;
+                                    <Button variant="primary" onClick={() => this.handleShowModalDropEDM()}><FontAwesomeIcon icon="upload" size={'sm'} /> EDM</Button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {result}
+                        </tbody>
+                    </Table>
+                </div>
 
                 <Modal show={this.state.showModal} onHide={this.handleCloseModal}>
                     <Modal.Header closeButton>
@@ -678,4 +689,5 @@ export default class EditMappings extends Component {
 
         )
     }
+
 }

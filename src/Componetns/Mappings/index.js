@@ -23,21 +23,23 @@ const Mappings = (props) => {
     }
 
     const mappingsTable = () => (
-        <Table>
-            <thead>
-                <tr>
-                    <th>Label</th>
-                    <th>Description</th>
-                    <th>Language</th>
-                    <th>Vocabulary Name</th>
-                    <th>Provider Name</th>
-                    <th><Button variant="success" onClick={() => setShowModal(true)}>Create</Button></th>
-                </tr>
-            </thead>
-            <tbody>
-                {result}
-            </tbody>
-        </Table>
+        <div style={styles.containerCard}>
+            <Table>
+                <thead>
+                    <tr>
+                        <th>Label</th>
+                        <th>Description</th>
+                        <th>Language</th>
+                        <th>Vocabulary Name</th>
+                        <th>Provider Name</th>
+                        <th><Button variant="success" onClick={() => setShowModal(true)}>Create</Button></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {result}
+                </tbody>
+            </Table>
+        </div>
     )
 
     const result = mappings.map(mapping => {
@@ -53,7 +55,7 @@ const Mappings = (props) => {
 
     return (
         <React.Fragment>
-            <Breadcrumb>
+            <Breadcrumb style={styles.containerCard}>
                 <Breadcrumb.Item onClick={() => props.history.push('/home')}>Home</Breadcrumb.Item>
                 <Breadcrumb.Item onClick={() => props.history.push('/mappings')}>Thematic</Breadcrumb.Item>
             </Breadcrumb>
@@ -72,6 +74,11 @@ const styles = {
         backgroundPosition: 'center',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat'
+    },
+    containerCard: {
+        backgroundColor: 'white',
+        margin: '12px',
+        boxShadow: '5px 5px 5px 0px rgba(0,0,0,0.75)',
     }
 }
 

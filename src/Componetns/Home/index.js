@@ -1,35 +1,121 @@
-import React, { useState, Fragment } from 'react'
-import { Card, Button, Form } from 'react-bootstrap'
+import React, { useState, useEffect, Fragment } from 'react'
+import { Card, Button, Modal, Form } from 'react-bootstrap'
 import { Redirect } from 'react-router-dom'
+import * as Resourses from '../../Resources'
 import backgroundImage from '../../assets/background.jpg';
 import backgroundThematic from '../../assets/backgroundThematic.jpg';
 import backgroundSpatial from '../../assets/backgroundSpatial.jpg';
 import backgroundTemporal from '../../assets/backgroundTemporal.jpg';
+import { isAbsolute } from 'path';
+import Dropzone from 'react-dropzone'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSave, faTrashAlt, faCaretRight } from '@fortawesome/free-solid-svg-icons'
+import { fetchData, addToast, postData, postUpload } from '../../Utils';
+import { ENDPOINT } from '../../config'
+import { TOAST } from '../../Resources';
 
 function Home(props) {
 
+    //const [isAuth, setIsAuth] = useState(false)
+    const { edmArchives, loadEdmArchives } = props
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [isLoading, setIsLoading] = useState(true)
+    const [highlight, setHighlight] = useState(true)
+    const [isMounted, setIsMounted] = useState(false)
+    const [showModalDropEDM, setShowModalDropEDM] = useState(false)
+
+
+    const handleShowModalDropEDM = () => {
+        setShowModalDropEDM(true)
+    }
+    const handleCloseModalDropEDM = () => {
+        setShowModalDropEDM(false)
+    }
+
+    const onDropEDM = (files) => {
+        var data = new FormData()
+        files.forEach(file => {
+            data.append('file', file, file.name)
+        });
+
+        postUpload(`${ENDPOINT.EDM_ARCHIVES_UPLOAD}`, data, true)
+            .then(mappingTerms => isMounted && loadEdmArchives())
+            .catch(() => addToast('Failed to upload', TOAST.ERROR))
+        handleCloseModalDropEDM()
+
+    }
+
+    const onDragOverEDM = (evt) => {
+        evt.preventDefault()
+
+        if (this.props.disabled) return
+
+        this.setState({ hightlightEDM: true })
+    }
+
+    const onDragLeaveEDM = () => {
+        this.setState({ hightlightEDM: false })
+    }
+
+
+    const edmArchivesCards = edmArchives.map(edmArchive => {
+        console.log(edmArchive)
+        return <Button key={edmArchive.id} variant="outline-info" block onClick={() => props.history.push(`/edmarchives/${edmArchive.id}`)}>{edmArchive.name} ({edmArchive.itemCount} items)<FontAwesomeIcon icon="caret-right" /> </Button>
+    })
 
     const homeCards = () => (
         <div style={styles.container}>
-            <Card onClick={() => props.history.push('/mappings')} style={styles.backThematic}>
+
+            <Card style={styles.backMappings}>
                 <Card.Body>
-                    <Card.Title className="text-center">Thematic Mappings</Card.Title>
+                    <Card.Title className="text-center">My Mappings</Card.Title>
+                    <Button variant="outline-primary" block onClick={() => props.history.push('/mappings')}>Thematic Mappings <FontAwesomeIcon icon="caret-right" /> </Button>
+                    <Button variant="outline-primary" block onClick={() => props.history.push('/spatial')}>Spatial Mappings <FontAwesomeIcon icon="caret-right" /> </Button>
+                    <Button variant="outline-primary" block >Temporal Mappings <FontAwesomeIcon icon="caret-right" /> </Button>
                 </Card.Body>
             </Card>
 
-            <Card onClick={() => props.history.push('/spatial')} style={styles.backSpatial}>
+            <Card style={styles.backEDMUploads}>
                 <Card.Body>
-                    <Card.Title className="text-center">Spatial Mappings</Card.Title>
+                    <Card.Title className="text-left">
+                        My EDM Uploads &nbsp;
+                        <Button variant="primary" className="pull-right" onClick={() => handleShowModalDropEDM()}><FontAwesomeIcon icon="upload" size={'sm'} /> EDM</Button>
+                    </Card.Title>
+                    {edmArchivesCards}
+                    
                 </Card.Body>
             </Card>
 
-            <Card style={styles.backTemporal} >
-                <Card.Body>
-                    <Card.Title className="text-center">Temporal Mappings</Card.Title>
-                </Card.Body>
-            </Card>
+
+            <div className="containerImg" />
+
+            <Modal show={showModalDropEDM} onHide={handleCloseModalDropEDM}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Upload a new EDM Archive</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Dropzone className={`Dropzone ${highlight ? 'Highlight' : ''}`}
+                        onDrop={onDropEDM}
+                        onDragOver={onDragOverEDM}
+                        onDragLeave={onDragLeaveEDM}
+                        style={{ cursor: props.disabled ? 'default' : 'pointer' }} >
+                        {({ getRootProps, getInputProps }) => (
+                            <section>
+                                <div {...getRootProps()}>
+                                    <input {...getInputProps()} />
+                                    <p>Drag 'n' drop an EDM archive (zip file containing EDM xml files) here, or click to select files</p>
+                                </div>
+                            </section>
+                        )}
+                    </Dropzone>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseModalDropEDM}>
+                        Close
+                </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
     return (
@@ -54,32 +140,29 @@ const styles = {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-
+        backgroundColor: 'rgb(235, 235, 224)',
+    },
+    containerImg: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: '100%',
+        height: '100vh',
+        opacity: 0.6,
         backgroundImage: `url(${backgroundImage})`,
         backgroundPosition: 'center',
         backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat'
+        backgroundRepeat: 'no-repeat',
+        zIndex: 2,
     },
-    backThematic: {
-        width: '20rem', height: '20rem', margin: '12px',
-        backgroundImage: `url(${backgroundThematic})`,
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat'
+    backMappings: {
+        width: '20rem', height: '30rem', margin: '12px',
+        boxShadow: '5px 5px 5px 0px rgba(0,0,0,0.75)',
     },
-    backSpatial: {
-        width: '20rem', height: '20rem', margin: '12px',
-        backgroundImage: `url(${backgroundSpatial})`,
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat'
-    },
-    backTemporal: {
-        width: '20rem', height: '20rem', margin: '12px',
-        backgroundImage: `url(${backgroundTemporal})`,
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat'
+    backEDMUploads: {
+        width: '40rem', height: '30rem', margin: '12px',
+        boxShadow: '5px 5px 5px 0px rgba(0,0,0,0.75)',
+        zIndex: 2,
     },
     link: {
         fontSize: 12,
