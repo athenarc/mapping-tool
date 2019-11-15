@@ -140,3 +140,25 @@ export const getExcel = (url, data, name) => {
         });
 
 }
+
+
+export const getFile = (url, data, filename) => {
+    return fetch(url, {
+        method: 'POST',
+        mode: "cors",
+        body: JSON.stringify(data),
+        headers: getDefaultHeaders()
+    })
+        .then(function (resp) {
+            return resp.blob();
+        }).then(function (blob) {
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+            a.click();
+            a.remove();
+        });
+
+}
