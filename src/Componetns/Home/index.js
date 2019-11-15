@@ -30,6 +30,16 @@ function Home(props) {
     }, [])
 
 
+    const extractTerms = (archiveId) => {
+        const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/extract_terms`
+        postData(url, true, true)
+        .then(data => {
+            ;
+        })
+        .catch(() => addToast('Something went wrong', TOAST.ERROR)) 
+    }
+
+
     const handleShowModalDropEDM = () => {
         setShowModalDropEDM(true)
     }
@@ -44,7 +54,10 @@ function Home(props) {
         });
 
         postUpload(`${ENDPOINT.EDM_ARCHIVES_UPLOAD}`, data, true)
-            .then(mappingTerms => isMounted && loadEdmArchives())
+            .then( (data) => {
+                extractTerms(data.id)
+                props.loadEdmArchives() 
+            })
             .catch(() => addToast('Failed to upload', TOAST.ERROR))
         handleCloseModalDropEDM()
 
