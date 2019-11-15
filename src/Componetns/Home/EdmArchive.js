@@ -52,11 +52,10 @@ export default function EdmArchive(props) {
 
 
     const getArchiveTerms = (archiveId) => {
-        const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/extract_terms`
-        postData(url, {}, true, true)
+        const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/terms`
+        fetchData(url, true, true)
         .then(data => {
             setArchiveTerms(data)
-            
         })
         .catch(() => addToast('Something went wrong', TOAST.ERROR)) 
     }
@@ -226,7 +225,7 @@ export default function EdmArchive(props) {
                         </Card.Body>
                         <Card.Footer>
                         {
-                                archive.thematicMapping > 0
+                                archive.spatialMapping > 0
                                 ? <Button size={'sm'} onClick={() => props.history.push(`/spatial/${archive.spatialMapping}`)} className="ml-3"><FontAwesomeIcon icon="save" size={'sm'} /> Goto mapping</Button>
                                 : <div><Button size={'sm'} variant="primary" onClick={() => createNewMapping('spatial')} className="ml-3">Create new</Button>&nbsp;<Button size={'sm'} variant="primary" onClick={() => handleShowModalMappings()}>Add to Existing</Button></div>
                             }
@@ -246,7 +245,7 @@ export default function EdmArchive(props) {
                         </Card.Body>
                         <Card.Footer>
                         {
-                                archive.thematicMapping > 0
+                                archive.temporalMapping > 0
                                 ? <Button size={'sm'} onClick={() => props.history.push(`/temporal/${archive.temporalMapping}`)} className="ml-3"><FontAwesomeIcon icon="save" size={'sm'} /> Goto mapping</Button>
                                 : <div><Button size={'sm'} variant="primary" onClick={() => createNewMapping('temporald')} className="ml-3">Create new</Button>&nbsp;<Button size={'sm'} variant="primary" onClick={() => handleShowModalMappings()}>Add to Existing</Button></div>
                             }
