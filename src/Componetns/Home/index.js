@@ -25,6 +25,10 @@ function Home(props) {
     const [isMounted, setIsMounted] = useState(false)
     const [showModalDropEDM, setShowModalDropEDM] = useState(false)
 
+    useEffect(() => {
+        
+    }, [])
+
 
     const handleShowModalDropEDM = () => {
         setShowModalDropEDM(true)
@@ -49,7 +53,7 @@ function Home(props) {
     const onDragOverEDM = (evt) => {
         evt.preventDefault()
 
-        if (this.props.disabled) return
+        if (props.disabled) return
 
         this.setState({ hightlightEDM: true })
     }

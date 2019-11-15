@@ -102,7 +102,7 @@ export default function Origin(props) {
           <Route path="/login" {...props} component={(props) => <Login  {...props} login={login} isAuth={isAuth} isLoading={isLoading} />} />
           <Route path="/register" {...props} component={(props) => <Register  {...props} register={register} isAuth={isAuth} isLoading={isLoading} />} />
           <PrivateRoute path="/home" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <Home  {...props} edmArchives={edmArchives} loadEdmArchives={loadEdmArchives} />} />
-          <PrivateRoute path="/edmarchives/:id"  permissions={[isAuth]} isLoading={isLoading} component={EdmArchive} />
+          <PrivateRoute path="/edmarchives/:id"  permissions={[isAuth]} isLoading={isLoading} component={(props) => <EdmArchive  {...props} edmArchives={edmArchives} loadEdmArchives={loadEdmArchives} />} />
           <Route component={() => <NotFound />} />
         </Switch>
       </BrowserRouter>

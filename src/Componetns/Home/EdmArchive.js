@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { fetchData, addToast, getExcel, getFile, postData } from '../../Utils'
+import { fetchData, deleteData, addToast, getExcel, getFile, postData } from '../../Utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { TOAST } from '../../Resources'
 import { ENDPOINT, BASE_URL } from '../../config'
@@ -26,9 +26,11 @@ const archiveTermsSchema = {
 
 export default function EdmArchive(props) {
 
+    const { edmArchives, loadEdmArchives } = props
     const [archiveTerms, setArchiveTerms] = useState(archiveTermsSchema)
     const [mappings, setMappings] = useState([])
     const [showModalMappings, setShowModalMappings] = useState(false)
+    const [showModalDelete, setShowModalDelete] = useState(false)
     const archiveId = props.match.params.id
     const [archive, setArchive] = useState(archiveSchema)
     
@@ -44,7 +46,7 @@ export default function EdmArchive(props) {
          })
          */
 
-        //loadArchive()
+        loadArchive()
         getArchiveTerms(archiveId)
     }, [archiveId])
 
@@ -73,7 +75,7 @@ export default function EdmArchive(props) {
     const downloadArchive = () => {
         if (!archive) return addToast('Arvhive not found', TOAST.ERROR)
         const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/download`
-        getFile(url, "", archive.filename).catch(() => addToast('Failed to download archive', TOAST.ERROR))
+        getFile(url, {}, archive.filename).catch(() => addToast('Failed to download archive', TOAST.ERROR))
     }
     
 
@@ -107,8 +109,23 @@ export default function EdmArchive(props) {
     const saveExtractedTerms = () => {
         if (!archive) return addToast('Mapping not found', TOAST.ERROR)
         const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/terms`
-        getExcel(url, "", 'mapping').catch(() => addToast('Failed to download excel', TOAST.ERROR))
+        getExcel(url, archiveTerms, 'mapping').catch(() => addToast('Failed to download excel', TOAST.ERROR))
     }
+
+    const deleteArchive = () => {
+        if (!archive) return addToast('Archive not found', TOAST.ERROR)
+        const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}`
+       
+        deleteData(url, true)
+        .then(() => {
+            handleCloseModalDelete()
+            props.history.push('/home')
+            props.loadEdmArchives()
+        })
+        .catch(() => addToast('Failed to delete archive', TOAST.ERROR))
+
+    }
+    
 
 
 
@@ -126,6 +143,14 @@ export default function EdmArchive(props) {
         setShowModalMappings(true)
     }
 
+    const handleCloseModalDelete = () => {
+        setShowModalDelete(false)
+    }
+    const handleShowModalDelete = () => {
+        setShowModalDelete(true)
+    }
+
+    
 
     const styles = {
         container: {
@@ -160,7 +185,7 @@ export default function EdmArchive(props) {
                         <Card.Footer>
                             <Button size={'sm'} onClick={() => downloadArchive()} className="ml-3"><FontAwesomeIcon icon="download" size={'sm'} /> Download</Button>
                             <Button size={'sm'} onClick={() => enrichArchive()} className="ml-3"><FontAwesomeIcon icon="save" size={'sm'} /> Enrich Archive</Button>
-                            <Button size={'sm'} onClick={() => saveExtractedTerms()} className="ml-3"><FontAwesomeIcon icon="save" size={'sm'} /> Save extracted terms</Button>
+                            <Button variant="danger" size={'sm'} onClick={() => handleShowModalDelete()} className="ml-3"><FontAwesomeIcon icon="delete" size={'sm'} /> Delete Archive</Button>
                         </Card.Footer>
                     </Card>
                 </Col>
@@ -248,6 +273,25 @@ export default function EdmArchive(props) {
                     </Button>
                     </Modal.Footer>
                 </Modal>
+
+
+                <Modal show={showModalDelete} onHide={handleCloseModalDelete}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirm delete</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        Confirm delete this archive and all of it's contents ?
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleCloseModalDelete}>
+                            Close
+                    </Button>
+                        <Button variant="danger" onClick={() => deleteArchive()}>
+                            Delete
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
+
 
         </React.Fragment> 
         </div>
