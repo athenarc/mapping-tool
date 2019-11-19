@@ -72,11 +72,16 @@ export default function EdmArchive(props) {
 
 
     const downloadArchive = () => {
-        if (!archive) return addToast('Arvhive not found', TOAST.ERROR)
+        if (!archive) return addToast('Archive not found', TOAST.ERROR)
         const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/download`
         getFile(url, {}, archive.filename).catch(() => addToast('Failed to download archive', TOAST.ERROR))
     }
     
+    const downloadEnrichedArchive = () => {
+        if (!archive) return addToast('Enriched Archive not found', TOAST.ERROR)
+        const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/download?type=eEDM`
+        getFile(url, {}, archive.filename).catch(() => addToast('Failed to download archive', TOAST.ERROR))     
+    }
 
     const createNewMapping = (type) => {
         const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/mappings?type=${type}`
@@ -99,10 +104,10 @@ export default function EdmArchive(props) {
 
 
     const enrichArchive = () => {
-        /*const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/enrich`
+        const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/enrich`
         postData(url, {}, true, true)
         .then(data => setArchiveTerms(data))
-        .catch(() => addToast('Something went wrong', TOAST.ERROR))*/
+        .catch(() => addToast('Something went wrong', TOAST.ERROR))
     }
 
     const saveExtractedTerms = () => {
@@ -182,8 +187,9 @@ export default function EdmArchive(props) {
                             Filename: {archive.filename} <br/>
                         </Card.Body>
                         <Card.Footer>
-                            <Button size={'sm'} onClick={() => downloadArchive()} className="ml-3"><FontAwesomeIcon icon="download" size={'sm'} /> Download</Button>
+                            <Button size={'sm'} onClick={() => downloadArchive()} className="ml-3"><FontAwesomeIcon icon="download" size={'sm'} /> Download Original</Button>
                             <Button size={'sm'} onClick={() => enrichArchive()} className="ml-3"><FontAwesomeIcon icon="save" size={'sm'} /> Enrich Archive</Button>
+                            <Button size={'sm'} onClick={() => downloadEnrichedArchive()} className="ml-3"><FontAwesomeIcon icon="download" size={'sm'} /> Download Enriched</Button>
                             <Button variant="danger" size={'sm'} onClick={() => handleShowModalDelete()} className="ml-3"><FontAwesomeIcon icon="delete" size={'sm'} /> Delete Archive</Button>
                         </Card.Footer>
                     </Card>
