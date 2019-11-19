@@ -106,7 +106,9 @@ export default function EdmArchive(props) {
     const enrichArchive = () => {
         const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/enrich`
         postData(url, {}, true, true)
-        .then(data => setArchiveTerms(data))
+        .then(data => {
+            ;
+        })
         .catch(() => addToast('Something went wrong', TOAST.ERROR))
     }
 
@@ -211,7 +213,7 @@ export default function EdmArchive(props) {
                             <div style={styles.tableCard}>
                             <Table>
                                 <tbody>  
-                                {archiveTerms.subjectTerms.map((term,index)=> {
+                                {archiveTerms && archiveTerms.subjectTerms && archiveTerms.subjectTerms.map((term,index)=> {
                                     return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language}</td></tr>
                                 })}
                                 </tbody>
@@ -235,7 +237,7 @@ export default function EdmArchive(props) {
                             <div style={styles.tableCard}>
                             <Table>
                                 <tbody>  
-                                {archiveTerms.spatialTerms.map((term,index)=> {
+                                {archiveTerms && archiveTerms.spatialTerms && archiveTerms.spatialTerms.map((term,index)=> {
                                     return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language}</td></tr>
                                 })}
                                 </tbody>
@@ -259,7 +261,7 @@ export default function EdmArchive(props) {
                             <div style={styles.tableCard}>
                             <Table>
                                 <tbody>  
-                                    {archiveTerms.temporalTerms.map((term,index)=> {
+                                    {archiveTerms && archiveTerms.temporalTerms && archiveTerms.temporalTerms.map((term,index)=> {
                                         return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language}</td></tr>
                                     })}
                                 </tbody>
