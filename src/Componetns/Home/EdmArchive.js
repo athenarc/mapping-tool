@@ -165,6 +165,11 @@ export default function EdmArchive(props) {
             backgroundColor: 'white',
             margin: '12px',
             boxShadow: '5px 5px 5px 0px rgba(0,0,0,0.75)',
+        },
+        tableCard: {
+            maxHeight: '300px',
+            height: '300px',
+            overflow: 'auto'
         }
     }
 
@@ -203,11 +208,15 @@ export default function EdmArchive(props) {
                         <Card.Body>
                             <Card.Title className="text-center">Subject</Card.Title>
                             <hr/>
-                            <table style={{maxHeight: '200px', overflow:'auto'}}><tbody>
-                            {archiveTerms.subjectTerms.map((term,index)=> {
-                                return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language}</td></tr>
-                            })}
-                            </tbody></table>
+                            <div style={styles.tableCard}>
+                            <Table>
+                                <tbody>  
+                                {archiveTerms.subjectTerms.map((term,index)=> {
+                                    return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language}</td></tr>
+                                })}
+                                </tbody>
+                            </Table>
+                            </div>
                         </Card.Body>
                         <Card.Footer>
                             {
@@ -223,11 +232,15 @@ export default function EdmArchive(props) {
                         <Card.Body>
                             <Card.Title className="text-center">Spatial</Card.Title>
                             <hr/>
-                            <table style={{maxHeight: '200px', overflow:'auto'}}><tbody>
-                            {archiveTerms.spatialTerms.map((term,index)=> {
-                                return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language}</td></tr>
-                            })}
-                            </tbody></table>
+                            <div style={styles.tableCard}>
+                            <Table>
+                                <tbody>  
+                                {archiveTerms.spatialTerms.map((term,index)=> {
+                                    return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language}</td></tr>
+                                })}
+                                </tbody>
+                            </Table>
+                            </div>
                         </Card.Body>
                         <Card.Footer>
                         {
@@ -243,11 +256,15 @@ export default function EdmArchive(props) {
                         <Card.Body>
                             <Card.Title className="text-center">Temporal</Card.Title>
                             <hr/>
-                            <table style={{maxHeight: '200px', overflow:'auto'}}><tbody>
-                            {archiveTerms.temporalTerms.map((term,index)=> {
-                                return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language}</td></tr>
-                            })}
-                            </tbody></table>
+                            <div style={styles.tableCard}>
+                            <Table>
+                                <tbody>  
+                                    {archiveTerms.temporalTerms.map((term,index)=> {
+                                        return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language}</td></tr>
+                                    })}
+                                </tbody>
+                            </Table>
+                            </div>
                         </Card.Body>
                         <Card.Footer>
                         {
