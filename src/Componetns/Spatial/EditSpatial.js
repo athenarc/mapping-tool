@@ -295,7 +295,7 @@ export default class EditSpatial extends Component {
     handleUpdateTerm(termId) {
         const mappingId = this.props.match.params.id
         const term = this.state.mappingTerms.find(x => x.id === termId)
-        const url = `${ENDPOINT.MAPPINGS}/${mappingId}/terms/${termId}`
+        const url = `${ENDPOINT.MAPPINGS}/${mappingId}/spatial_terms/${termId}`
         updateData(url, term).catch(() => addToast('Failed to update term', TOAST.ERROR))
 
     }
@@ -480,7 +480,7 @@ export default class EditSpatial extends Component {
                             <th>
                                 <Button variant="success" onClick={() => this.handleShowModal()}>Create</Button> &nbsp;
                                 <Button variant="primary" onClick={() => this.handleShowModalDrop()}><FontAwesomeIcon icon="upload" size={'sm'} /></Button> &nbsp;
-                                <Button variant="primary" onClick={() => this.handleShowModalDropEDM()}><FontAwesomeIcon icon="upload" size={'sm'} /> EDM</Button>
+                                {/*<Button variant="primary" onClick={() => this.handleShowModalDropEDM()}><FontAwesomeIcon icon="upload" size={'sm'} /> EDM</Button>*/}
                             </th>
                         </tr>
                     </thead>

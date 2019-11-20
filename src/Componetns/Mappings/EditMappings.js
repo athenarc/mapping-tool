@@ -492,7 +492,7 @@ export default class EditMappings extends Component {
                                 <th>
                                     <Button variant="success" onClick={() => this.handleShowModal()}>Create</Button> &nbsp;
                                     <Button variant="primary" onClick={() => this.handleShowModalDrop()}><FontAwesomeIcon icon="upload" size={'sm'} /></Button> &nbsp;
-                                    <Button variant="primary" onClick={() => this.handleShowModalDropEDM()}><FontAwesomeIcon icon="upload" size={'sm'} /> EDM</Button>
+                                    {/*<Button variant="primary" onClick={() => this.handleShowModalDropEDM()}><FontAwesomeIcon icon="upload" size={'sm'} /> EDM</Button>*/}
                                 </th>
                             </tr>
                         </thead>

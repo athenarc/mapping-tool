@@ -30,8 +30,7 @@ const Mappings = (props) => {
                         <th>Label</th>
                         <th>Description</th>
                         <th>Language</th>
-                        <th>Vocabulary Name</th>
-                        <th>Provider Name</th>
+                    
                         <th><Button variant="success" onClick={() => setShowModal(true)}>Create</Button></th>
                     </tr>
                 </thead>
@@ -47,8 +46,7 @@ const Mappings = (props) => {
             <td>{mapping.label}</td>
             <td>{mapping.description}</td>
             <td>{mapping.language}</td>
-            <td>{mapping.vocabularyName}</td>
-            <td>{mapping.providerName}</td>
+
             <td><Button onClick={() => history.push(`/mappings/${mapping.id}`)}><FontAwesomeIcon icon="caret-right" /></Button></td>
         </tr>
     })
