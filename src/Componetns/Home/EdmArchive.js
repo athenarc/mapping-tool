@@ -4,12 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { TOAST } from '../../Resources'
 import { ENDPOINT, BASE_URL } from '../../config'
 import { Modal, Card, Row, Col, Table, Breadcrumb, Button, Container } from 'react-bootstrap'
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
 const archiveSchema = {
     createdAt: "",
     createdBy: null,
     filename: "",
     filepath: "",
+    enrichedFilepath: null,
     id: 0,
     itemCount: 0,
     name: "",
@@ -196,8 +198,8 @@ export default function EdmArchive(props) {
                         <Card.Footer>
                             <Button size={'sm'} onClick={() => downloadArchive()} className="ml-3"><FontAwesomeIcon icon="download" size={'sm'} /> Download Original</Button>
                             <Button size={'sm'} onClick={() => enrichArchive()} className="ml-3"><FontAwesomeIcon icon="save" size={'sm'} /> Enrich Archive</Button>
-                            <Button size={'sm'} onClick={() => downloadEnrichedArchive()} className="ml-3"><FontAwesomeIcon icon="download" size={'sm'} /> Download Enriched</Button>
-                            <Button variant="danger" size={'sm'} onClick={() => handleShowModalDelete()} className="ml-3"><FontAwesomeIcon icon="delete" size={'sm'} /> Delete Archive</Button>
+                            <Button size={'sm'} disabled={archive && !archive.enrichedFilepath} onClick={() => downloadEnrichedArchive()} className="ml-3"><FontAwesomeIcon icon="download" size={'sm'} /> Download Enriched</Button>
+                            <Button variant="danger" size={'sm'} onClick={() => handleShowModalDelete()} className="ml-3"><FontAwesomeIcon icon="trash-alt" size={'sm'} /> Delete Archive</Button>
                         </Card.Footer>
                     </Card>
                 </Col>
