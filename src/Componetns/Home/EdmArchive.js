@@ -208,7 +208,7 @@ export default function EdmArchive(props) {
                 <Col md="4">
                     <Card style={styles.backMappings}>
                         <Card.Body>
-                            <Card.Title className="text-center">Subject</Card.Title>
+                            <Card.Title className="text-center">Subject ({archiveTerms && archiveTerms.subjectTerms && archiveTerms.subjectTerms.length})</Card.Title>
                             <hr/>
                             <div style={styles.tableCard}>
                             <Table>
@@ -232,7 +232,7 @@ export default function EdmArchive(props) {
                 <Col md="4">
                     <Card style={styles.backMappings}>
                         <Card.Body>
-                            <Card.Title className="text-center">Spatial</Card.Title>
+                            <Card.Title className="text-center">Spatial ({archiveTerms && archiveTerms.spatialTerms && archiveTerms.spatialTerms.length})</Card.Title>
                             <hr/>
                             <div style={styles.tableCard}>
                             <Table>
@@ -245,7 +245,7 @@ export default function EdmArchive(props) {
                             </div>
                         </Card.Body>
                         <Card.Footer>
-                        {
+                            {
                                 archive.spatialMapping > 0
                                 ? <Button size={'sm'} onClick={() => props.history.push(`/spatial/${archive.spatialMapping}`)} className="ml-3"><FontAwesomeIcon icon="save" size={'sm'} /> Goto mapping</Button>
                                 : <div><Button size={'sm'} variant="primary" onClick={() => createNewMapping('spatial')} className="ml-3">Create new</Button>&nbsp;<Button size={'sm'} variant="primary" onClick={() => handleShowModalMappings()}>Add to Existing</Button></div>
@@ -256,7 +256,7 @@ export default function EdmArchive(props) {
                 <Col md="4">
                     <Card style={styles.backMappings}>
                         <Card.Body>
-                            <Card.Title className="text-center">Temporal</Card.Title>
+                            <Card.Title className="text-center">Temporal ({archiveTerms && archiveTerms.temporalTerms && archiveTerms.temporalTerms.length})</Card.Title>
                             <hr/>
                             <div style={styles.tableCard}>
                             <Table>
@@ -269,7 +269,7 @@ export default function EdmArchive(props) {
                             </div>
                         </Card.Body>
                         <Card.Footer>
-                        {
+                            {
                                 archive.temporalMapping > 0
                                 ? <Button size={'sm'} onClick={() => props.history.push(`/temporal/${archive.temporalMapping}`)} className="ml-3"><FontAwesomeIcon icon="save" size={'sm'} /> Goto mapping</Button>
                                 : <div><Button size={'sm'} variant="primary" onClick={() => createNewMapping('temporald')} className="ml-3">Create new</Button>&nbsp;<Button size={'sm'} variant="primary" onClick={() => handleShowModalMappings()}>Add to Existing</Button></div>
