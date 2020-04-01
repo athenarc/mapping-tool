@@ -21,9 +21,9 @@ const archiveSchema = {
 }
 
 const archiveTermsSchema = {
-    subjectTerms: [],
-    spatialTerms: [],
-    temporalTerms: []
+    subjectTermEntities: [],
+    spatialTermEntities: [],
+    temporalTermEntities: []
 }
 
 export default function EdmArchive(props) {
@@ -210,13 +210,13 @@ export default function EdmArchive(props) {
                 <Col md="4">
                     <Card style={styles.backMappings}>
                         <Card.Body>
-                            <Card.Title className="text-center">Subject ({archiveTerms && archiveTerms.subjectTerms && archiveTerms.subjectTerms.length})</Card.Title>
+                            <Card.Title className="text-center">Subject ({archiveTerms && archiveTerms.subjectTermEntities && archiveTerms.subjectTermEntities.length})</Card.Title>
                             <hr/>
                             <div style={styles.tableCard}>
                             <Table>
                                 <tbody>  
-                                {archiveTerms && archiveTerms.subjectTerms && archiveTerms.subjectTerms.map((term,index)=> {
-                                    return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language}</td></tr>
+                                {archiveTerms && archiveTerms.subjectTermEntities && archiveTerms.subjectTermEntities.map((term,index)=> {
+                                    return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language && term.language}</td><td>{term.count && term.count}</td></tr>
                                 })}
                                 </tbody>
                             </Table>
@@ -234,13 +234,13 @@ export default function EdmArchive(props) {
                 <Col md="4">
                     <Card style={styles.backMappings}>
                         <Card.Body>
-                            <Card.Title className="text-center">Spatial ({archiveTerms && archiveTerms.spatialTerms && archiveTerms.spatialTerms.length})</Card.Title>
+                            <Card.Title className="text-center">Spatial ({archiveTerms && archiveTerms.spatialTermEntities && archiveTerms.spatialTermEntities.length})</Card.Title>
                             <hr/>
                             <div style={styles.tableCard}>
                             <Table>
                                 <tbody>  
-                                {archiveTerms && archiveTerms.spatialTerms && archiveTerms.spatialTerms.map((term,index)=> {
-                                    return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language}</td></tr>
+                                {archiveTerms && archiveTerms.spatialTermEntities && archiveTerms.spatialTermEntities.map((term,index)=> {
+                                    return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language && term.language}</td><td>{term.count && term.count}</td></tr>
                                 })}
                                 </tbody>
                             </Table>
@@ -258,13 +258,13 @@ export default function EdmArchive(props) {
                 <Col md="4">
                     <Card style={styles.backMappings}>
                         <Card.Body>
-                            <Card.Title className="text-center">Temporal ({archiveTerms && archiveTerms.temporalTerms && archiveTerms.temporalTerms.length})</Card.Title>
+                            <Card.Title className="text-center">Temporal ({archiveTerms && archiveTerms.temporalTermEntities && archiveTerms.temporalTermEntities.length})</Card.Title>
                             <hr/>
                             <div style={styles.tableCard}>
                             <Table>
                                 <tbody>  
-                                    {archiveTerms && archiveTerms.temporalTerms && archiveTerms.temporalTerms.map((term,index)=> {
-                                        return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language}</td></tr>
+                                    {archiveTerms && archiveTerms.temporalTermEntities && archiveTerms.temporalTermEntities.map((term,index)=> {
+                                        return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language && term.language}</td><td>{term.count && term.count}</td></tr>
                                     })}
                                 </tbody>
                             </Table>
