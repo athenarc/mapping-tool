@@ -364,7 +364,7 @@ export default class EditTemporal extends Component {
     }
 
     promiseOptions = (inputValue) => {
-        return postData(`${BASE_URL}/geonames/search?q=${inputValue}`, {}, true)
+        return postData(`${BASE_URL}/temporal/search?q=${inputValue}`, {}, true)
             .then(data => data)
             .catch(() => addToast('Something went wrong', TOAST.ERROR))
     }
