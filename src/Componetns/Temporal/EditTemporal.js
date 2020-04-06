@@ -43,8 +43,8 @@ export default class EditTemporal extends Component {
         enrichDetails: [],
         newTerm: {
             nativeTerm: '',
-            geonameName: '',
-            geonameId: '',
+            earchTemporalLabel: '',
+            aatUid: '',
             language: 'en'
         },
         mappingSchema: {
@@ -215,8 +215,8 @@ export default class EditTemporal extends Component {
         this.setState({
             newTerm: {
                 ...this.state.newTerm,
-                geonameName: term.label,
-                geonameId: term.geonameId
+                earchTemporalLabel: term.earchTemporalLabel,
+                aatUid: term.aatUid
             }
         })
     }
@@ -449,10 +449,10 @@ export default class EditTemporal extends Component {
 
         const mapping = this.props.mappings.find(x => x.id == this.props.match.params.id)
 
-        const defaultValue = this.state.newTerm.geonameName
+        const defaultValue = this.state.newTerm.earchTemporalLabel
             ? {
-                label: this.state.newTerm.geonameName,
-                id: this.state.newTerm.geonameId
+                label: this.state.newTerm.earchTemporalLabel,
+                id: this.state.newTerm.aatUid
             }
             : null
 
@@ -526,7 +526,7 @@ export default class EditTemporal extends Component {
                             Close
                     </Button>
                         <Button variant="primary"
-                            disabled={!this.state.newTerm.geonameName || !this.state.newTerm.nativeTerm}
+                            disabled={!this.state.newTerm.earchTemporalLabel || !this.state.newTerm.nativeTerm}
                             onClick={onSave}>
                             Save Changes
                     </Button>
