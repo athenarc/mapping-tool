@@ -89,7 +89,7 @@ function Home(props) {
                     <Card.Title className="text-center">My Mappings</Card.Title>
                     <Button variant="outline-primary" block onClick={() => props.history.push('/mappings')}>Thematic Mappings <FontAwesomeIcon icon="caret-right" /> </Button>
                     <Button variant="outline-primary" block onClick={() => props.history.push('/spatial')}>Spatial Mappings <FontAwesomeIcon icon="caret-right" /> </Button>
-                    <Button variant="outline-primary" block >Temporal Mappings <FontAwesomeIcon icon="caret-right" /> </Button>
+                    <Button variant="outline-primary" block onClick={() => props.history.push('/temporal')}>Temporal Mappings <FontAwesomeIcon icon="caret-right" /> </Button>
                 </Card.Body>
             </Card>
 

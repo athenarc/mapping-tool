@@ -10,5 +10,6 @@ export const ENDPOINT = {
     EDM_ARCHIVES: BASE_URL + '/edm_archives',
     EDM_ARCHIVES_UPLOAD: BASE_URL + '/edm_archives/upload',
     SPATIAL_MAPPINGS: BASE_URL + '/mappings',
+    TEMPORAL_MAPPINGS: BASE_URL + '/mappings',
     LANGUAGES: BASE_URL + '/languages'
 }

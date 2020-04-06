@@ -13,6 +13,8 @@ import Mappings from './Mappings'
 import EditMappings from './Mappings/EditMappings'
 import Spatial from './Spatial'
 import EditSpatial from './Spatial/EditSpatial'
+import Temporal from './Temporal'
+import EditTemporal from './Temporal/EditTemporal'
 import NotFound from './NotFound'
 import Home from './Home'
 import Login from './Login/Login'
@@ -28,8 +30,10 @@ export default function Origin(props) {
   const [mappings, setMappings] = useState([])
   const [edmArchives, setEdmArchives] = useState([])
   const [spatials, setSpatial] = useState([])
+  const [temporals, setTemporal] = useState([])
   const [isLoadingMappings, setIsLoadingMappings] = useState(false)
   const [isLoadingSpatial, setIsLoadingSpatial] = useState(false)
+  const [isLoadingTemporal, setIsLoadingTemporal] = useState(false)
   const [languages, setLanguages] = useState([])
   const [isLoadingLanguages, setIsLoadingLanguages] = useState(false)
 
@@ -99,6 +103,8 @@ export default function Origin(props) {
           <PrivateRoute path="/mappings/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditMappings {...props} mappings={mappings.filter(x => x.type === 'subject')} languages={languages} handleRemoveMapping={handleRemoveMapping} />} />
           <PrivateRoute exact path="/spatial" permissions={[isAuth]} isLoading={isLoading} {...props} component={(props) => <Spatial {...props} mappings={mappings.filter(x => x.type === 'spatial')} updateMappings={updateMappings} languages={languages} />} />
           <PrivateRoute path="/spatial/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditSpatial {...props} mappings={mappings.filter(x => x.type === 'spatial')} languages={languages} handleRemoveMapping={handleRemoveMapping} />} />
+          <PrivateRoute exact path="/temporal" permissions={[isAuth]} isLoading={isLoading} {...props} component={(props) => <Temporal {...props} mappings={mappings.filter(x => x.type === 'temporal')} updateMappings={updateMappings} languages={languages} />} />
+          <PrivateRoute path="/temporal/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditTemporal {...props} mappings={mappings.filter(x => x.type === 'temporal')} languages={languages} handleRemoveMapping={handleRemoveMapping} />} />
           <Route path="/login" {...props} component={(props) => <Login  {...props} login={login} isAuth={isAuth} isLoading={isLoading} />} />
           <Route path="/register" {...props} component={(props) => <Register  {...props} register={register} isAuth={isAuth} isLoading={isLoading} />} />
           <PrivateRoute path="/home" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <Home  {...props} edmArchives={edmArchives} loadEdmArchives={loadEdmArchives} />} />
