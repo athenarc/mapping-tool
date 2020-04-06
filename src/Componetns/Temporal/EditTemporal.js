@@ -215,7 +215,7 @@ export default class EditTemporal extends Component {
         this.setState({
             newTerm: {
                 ...this.state.newTerm,
-                earchTemporalLabel: term.earchTemporalLabel,
+                earchTemporalLabel: term.label,
                 aatUid: term.aatUid
             }
         })
@@ -329,8 +329,8 @@ export default class EditTemporal extends Component {
                     if (index === i) {
                         return {
                             ...term,
-                            geonameName: editTerm.label,
-                            geonameId: editTerm.geonameId
+                            earchTemporalLabel: editTerm.label,
+                            aatUid: editTerm.aatUid
                         }
                     }
                     return term
@@ -380,7 +380,7 @@ export default class EditTemporal extends Component {
         const result = this.state.mappingTerms.map((term, index) => {
 
             const defaultValue = {
-                label: term.geonameName,
+                label: term.earchTemporalLabel,
                 id: term.id
             }
             const languageOptions = this.state.languages.map(v => ({
@@ -408,7 +408,7 @@ export default class EditTemporal extends Component {
                     <Button
                         variant="success"
                         className="mx-1"
-                        disabled={!term.geonameName || !term.nativeTerm}
+                        disabled={!term.earchTemporalLabel || !term.nativeTerm}
                         onClick={() => this.handleUpdateTerm(term.id)}>
                         <FontAwesomeIcon icon="save" />
                     </Button>

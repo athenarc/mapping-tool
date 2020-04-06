@@ -274,7 +274,7 @@ export default function EdmArchive(props) {
                             {
                                 archive.temporalMapping > 0
                                 ? <Button size={'sm'} onClick={() => props.history.push(`/temporal/${archive.temporalMapping}`)} className="ml-3"><FontAwesomeIcon icon="save" size={'sm'} /> Goto mapping</Button>
-                                : <div><Button size={'sm'} variant="primary" onClick={() => createNewMapping('temporald')} className="ml-3">Create new</Button>&nbsp;<Button size={'sm'} variant="primary" onClick={() => handleShowModalMappings()}>Add to Existing</Button></div>
+                                : <div><Button size={'sm'} variant="primary" onClick={() => createNewMapping('temporal')} className="ml-3">Create new</Button>&nbsp;<Button size={'sm'} variant="primary" onClick={() => handleShowModalMappings()}>Add to Existing</Button></div>
                             }
                         </Card.Footer>
                     </Card>
