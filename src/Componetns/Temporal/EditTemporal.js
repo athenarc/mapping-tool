@@ -12,6 +12,48 @@ import { TOAST } from '../../Resources';
 import { addToast } from '../../Utils'
 library.add(faSave, faTrashAlt, faDownload, faUpload)
 
+
+const rowStyle = {
+    padding: 8,
+    borderBottom: "1px solid lightgrey"
+};
+
+  const containerStyle = {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    height: 40
+};
+
+const CustomOption = props => {
+    const { innerProps, innerRef, isFocused, isSelected } = props;
+
+    let backgroundColor = "#fff";
+    if (isFocused) {
+        backgroundColor = "#e6f3ff";
+    } else if (isSelected) {
+        backgroundColor = "#4da9ff";
+    }
+    const myStyles = {
+        ...rowStyle,
+        backgroundColor
+    };
+
+    return (
+        <div ref={innerRef} {...innerProps} style={myStyles}>
+        <div style={containerStyle}>
+          <div style={{ fontSize:'18px', paddingRight:'20px', marginRight: 8 }}>{props.data.label}</div>
+          <div className="sub" style={{ fontSize:'14px'}}>({props.data.startYear} - {props.data.endYear})</div>
+        </div>
+        <div style={containerStyle}>
+          <div style={{ marginRight: 8 }}><a href={props.data.aatUri} target="_blank">AAT Ref</a></div>
+          <div style={{ marginRight: 8 }}>|</div>
+          <div style={{ marginRight: 8 }}><a href={props.data.wikidataUri} target="_blank">Wikidata Ref</a></div>
+        </div>
+      </div>
+    );
+};
+
 export default class EditTemporal extends Component {
     _isMounted = false;
 
@@ -398,11 +440,13 @@ export default class EditTemporal extends Component {
                         value={languageOptions.find(x => x.value == term.language)}
                         onChange={(e) => this.handleChangeLanguage(e.value, index)} />
                 </td>
-                <td><AsyncSelect
+                <td style={{minWidth:"240px"}}>
+                    <AsyncSelect
                     defaultValue={defaultValue}
                     size="15"
                     onChange={(e) => this.handleEditConceptLabel(e, index)}
-                    loadOptions={this.promiseOptions} />
+                    loadOptions={this.promiseOptions} 
+                    components={{ Option: CustomOption }} />
                 </td>
                 <td>
                     <Button
@@ -517,7 +561,7 @@ export default class EditTemporal extends Component {
                                 AAT Term
                             </Form.Label>
                             <Col sm="10">
-                                <AsyncSelect defaultValue={defaultValue} onChange={(e) => this.handleNewSubjectName(e)} loadOptions={this.promiseOptions} />
+                                <AsyncSelect defaultValue={defaultValue} onChange={(e) => this.handleNewSubjectName(e)} loadOptions={this.promiseOptions} components={{ Option: CustomOption }} />
                             </Col>
                         </Form.Group>
                     </Modal.Body>
