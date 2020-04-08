@@ -13,6 +13,7 @@ import { faSave, faTrashAlt, faCaretRight } from '@fortawesome/free-solid-svg-ic
 import { fetchData, addToast, postData, postUpload } from '../../Utils';
 import { ENDPOINT } from '../../config'
 import { TOAST } from '../../Resources';
+import { noAuto } from '@fortawesome/fontawesome-svg-core';
 
 function Home(props) {
 
@@ -94,11 +95,12 @@ function Home(props) {
             </Card>
 
             <Card style={styles.backEDMUploads}>
-                <Card.Body>
-                    <Card.Title className="text-left">
+                <Card.Title style={styles.backEDMUploadsTitle}>
                         My EDM Uploads &nbsp;
                         <Button variant="primary" className="pull-right" onClick={() => handleShowModalDropEDM()}><FontAwesomeIcon icon="upload" size={'sm'} /> EDM</Button>
-                    </Card.Title>
+                </Card.Title>
+                <Card.Body style={styles.backEDMUploadsBody}>
+
                     {edmArchivesCards}
                     
                 </Card.Body>
@@ -176,10 +178,17 @@ const styles = {
         width: '20rem', height: '30rem', margin: '12px',
         boxShadow: '5px 5px 5px 0px rgba(0,0,0,0.75)',
     },
+    backEDMUploadsTitle: {
+        paddingTop: '20px',
+        paddingLeft: '50px'
+    },
     backEDMUploads: {
         width: '40rem', height: '30rem', margin: '12px',
         boxShadow: '5px 5px 5px 0px rgba(0,0,0,0.75)',
         zIndex: 2,
+    },
+    backEDMUploadsBody: {
+        overflowY: 'auto'
     },
     link: {
         fontSize: 12,
