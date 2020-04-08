@@ -12,6 +12,7 @@ const archiveSchema = {
     filename: "",
     filepath: "",
     enrichedFilepath: null,
+    enrichedFilename: null,
     id: 0,
     itemCount: 0,
     name: "",
@@ -82,7 +83,7 @@ export default function EdmArchive(props) {
     const downloadEnrichedArchive = () => {
         if (!archive) return addToast('Enriched Archive not found', TOAST.ERROR)
         const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/download?type=eEDM`
-        getFile(url, {}, archive.filename).catch(() => addToast('Failed to download archive', TOAST.ERROR))     
+        getFile(url, {}, archive.enrichedFilename).catch(() => addToast('Failed to download archive', TOAST.ERROR))     
     }
 
     const createNewMapping = (type) => {
