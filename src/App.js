@@ -66,6 +66,18 @@ function App(props) {
       })
   }
 
+  const resetPassword = (form) => {
+    const f = {username: form}
+    console.log(f)
+    postData(ENDPOINT.AUTH.RESETPASSWORD, f, false)
+      .then((data) => {
+        addToast('Password reset successfully', Resourses.TOAST.SUCCESS)
+      })
+      /*.catch((e) => {
+        addToast('Failed to reset password', Resourses.TOAST.ERROR)
+      })*/
+  }
+
   return (
     <React.Fragment>
       <div style={styles.mainContainer}>
@@ -89,6 +101,7 @@ function App(props) {
               : <Origin
                 login={login}
                 register={register}
+                resetPassword={resetPassword}
                 isAuth={isAuth}
                 isLoading={isLoading}
               />

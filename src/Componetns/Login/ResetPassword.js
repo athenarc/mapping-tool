@@ -3,12 +3,11 @@ import { Card, Button, Form } from 'react-bootstrap'
 import { Redirect } from 'react-router-dom'
 import backgroundImage from '../../assets/background.jpg';
 
-function Login(props) {
+function ResetPassword(props) {
 
     const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
 
-    const loginForm = () => (
+    const resetPasswordForm = () => (
         <div style={styles.container}>
             <Card style={{ width: '25rem' }}>
                 <Card.Body>
@@ -18,17 +17,11 @@ function Login(props) {
                         <Form.Label>Email address</Form.Label>
                         <Form.Control type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter email" />
                     </Form.Group>
-                    <Form.Group controlId="formBasicPassword">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-                    </Form.Group>
-                    <Button variant="primary" onClick={() => props.login(email, password)}>Login</Button>
+                    
+                    <Button variant="primary" onClick={() => props.resetPassword(email)}>Reset</Button>
                     <hr />
                     <Form.Text className="text-muted">
-                        Don't have an account? <Button variant="link" style={styles.link} onClick={() => props.history.push('/register')}>Register</Button>
-                    </Form.Text>
-                    <Form.Text className="text-muted">
-                        Forgot password? <Button variant="link" style={styles.link} onClick={() => props.history.push('/reset-password')}>Reset</Button>
+                        Back to login <Button variant="link" style={styles.link} onClick={() => props.history.push('/login')}>Login</Button>
                     </Form.Text>
                 </Card.Body>
             </Card>
@@ -39,7 +32,7 @@ function Login(props) {
             {
                 !props.isLoading && props.isAuth
                     ? <Redirect to='/' />
-                    : loginForm()
+                    : resetPasswordForm()
             }
         </Fragment>
     )
@@ -68,4 +61,4 @@ const styles = {
     }
 }
 
-export default Login
+export default ResetPassword

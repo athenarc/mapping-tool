@@ -19,13 +19,14 @@ import NotFound from './NotFound'
 import Home from './Home'
 import Login from './Login/Login'
 import Register from './Login/Register'
+import ResetPassword from './Login/ResetPassword'
 import * as Resourses from '../Resources'
 
 import PrivateRoute from './lib/PrivateRoute';
 import EdmArchive from './Home/EdmArchive';
 
 export default function Origin(props) {
-  const { isLoading, isAuth, register, login } = props
+  const { isLoading, isAuth, register, login, resetPassword } = props
 
   const [mappings, setMappings] = useState([])
   const [edmArchives, setEdmArchives] = useState([])
@@ -50,7 +51,7 @@ export default function Origin(props) {
   const loadEdmArchives = () => {
     fetchData(ENDPOINT.EDM_ARCHIVES)
       .then(edmarchives => {
-        console.log(edmarchives)
+        //console.log(edmarchives)
         setEdmArchives(edmarchives)
       })
       .catch(() => {
@@ -62,7 +63,7 @@ export default function Origin(props) {
     setIsLoadingMappings(true)
     fetchData(ENDPOINT.MAPPINGS)
       .then(mappings => {
-        console.log(mappings);
+        //console.log(mappings);
         setMappings(mappings)
         setIsLoadingMappings(false)
       })
@@ -109,6 +110,7 @@ export default function Origin(props) {
           <PrivateRoute path="/temporal/:id" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <EditTemporal {...props} mappings={mappings.filter(x => x.type === 'temporal')} languages={languages} handleRemoveMapping={handleRemoveMapping} />} />
           <Route path="/login" {...props} component={(props) => <Login  {...props} login={login} isAuth={isAuth} isLoading={isLoading} />} />
           <Route path="/register" {...props} component={(props) => <Register  {...props} register={register} isAuth={isAuth} isLoading={isLoading} />} />
+          <Route path="/reset-password" {...props} component={(props) => <ResetPassword  {...props} resetPassword={resetPassword} isAuth={isAuth} isLoading={isLoading} />} />
           <PrivateRoute path="/home" {...props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <Home  {...props} edmArchives={edmArchives} loadEdmArchives={loadEdmArchives} />} />
           <PrivateRoute path="/edmarchives/:id"  permissions={[isAuth]} isLoading={isLoading} component={(props) => <EdmArchive  {...props} edmArchives={edmArchives} loadEdmArchives={loadEdmArchives} />} />
           <Route component={() => <NotFound />} />

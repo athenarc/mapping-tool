@@ -5,6 +5,7 @@ export const ENDPOINT = {
         LOGOUT: BASE_URL + '/auth/logout',
         STATUS: BASE_URL + '/auth/status',
         SIGNUP: BASE_URL + '/auth/signup',
+        RESETPASSWORD: BASE_URL + '/auth/reset_password'
     },
     MAPPINGS: BASE_URL + '/mappings',
     EDM_ARCHIVES: BASE_URL + '/edm_archives',
