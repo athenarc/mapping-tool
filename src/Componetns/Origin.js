@@ -45,7 +45,7 @@ export default function Origin(props) {
       loadMappings()
       loadEdmArchives()
     }
-  }, [])
+  }, [isAuth])
 
 
   const loadEdmArchives = () => {

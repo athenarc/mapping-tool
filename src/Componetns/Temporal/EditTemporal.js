@@ -87,7 +87,9 @@ export default class EditTemporal extends Component {
             nativeTerm: '',
             earchTemporalLabel: '',
             aatUid: '',
-            language: 'en'
+            language: 'en',
+            startYear: '',
+            endYear: ''
         },
         mappingSchema: {
             id: null,
@@ -272,6 +274,24 @@ export default class EditTemporal extends Component {
         })
     }
 
+    handleNewTermStartYear(startYear) {
+        this.setState({
+            newTerm: {
+                ...this.state.newTerm,
+                startYear: startYear
+            }
+        })
+    }
+
+    handleNewTermEndYear(endYear) {
+        this.setState({
+            newTerm: {
+                ...this.state.newTerm,
+                endYear: endYear
+            }
+        })
+    }
+
     handleSaveNew() {
         const mappingId = this.props.match.params.id
         const url = `${ENDPOINT.MAPPINGS}/${mappingId}/temporal_terms`
@@ -309,6 +329,36 @@ export default class EditTemporal extends Component {
                     return {
                         ...m,
                         nativeTerm: delta.target.value
+                    }
+                }
+                return m
+            })
+        })
+
+    }
+
+    handleChangeStartYear(delta, index) {
+        this.setState({
+            mappingTerms: this.state.mappingTerms.map((m, i) => {
+                if (i === index) {
+                    return {
+                        ...m,
+                        startYear: delta.target.value
+                    }
+                }
+                return m
+            })
+        })
+
+    }
+
+    handleChangeEndYear(delta, index) {
+        this.setState({
+            mappingTerms: this.state.mappingTerms.map((m, i) => {
+                if (i === index) {
+                    return {
+                        ...m,
+                        endYear: delta.target.value
                     }
                 }
                 return m
@@ -448,6 +498,16 @@ export default class EditTemporal extends Component {
                     loadOptions={this.promiseOptions} 
                     components={{ Option: CustomOption }} />
                 </td>
+                <td><Form.Control
+                    value={term.startYear ? term.startYear : ''}
+                    style={{width:100}}
+                    onChange={(e) => this.handleChangeStartYear(e, index)} />
+                </td>
+                <td><Form.Control
+                    value={term.endYear ? term.endYear : ''}
+                    style={{width:100}}
+                    onChange={(e) => this.handleChangeEndYear(e, index)} />
+                </td>
                 <td>
                     <Button
                         variant="success"
@@ -521,6 +581,8 @@ export default class EditTemporal extends Component {
                             <th>Term</th>
                             <th>Language</th>
                             <th>AAT Term</th>
+                            <th>Start Year</th>
+                            <th>End Year</th>
                             <th>
                                 <Button variant="success" onClick={() => this.handleShowModal()}>Create</Button> &nbsp;
                                 <Button variant="primary" onClick={() => this.handleShowModalDrop()}><FontAwesomeIcon icon="upload" size={'sm'} /></Button> &nbsp;
@@ -539,29 +601,45 @@ export default class EditTemporal extends Component {
                     </Modal.Header>
                     <Modal.Body>
                         <Form.Group as={Row} controlId="term">
-                            <Form.Label column sm="2">
+                            <Form.Label column sm="3">
                                 Term
                             </Form.Label>
-                            <Col sm="10">
+                            <Col sm="9">
                                 <Form.Control onChange={(e) => this.handleNewTermName(e.target.value)} value={this.state.newTerm.nativeTerm} placeholder='Add Term' />
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row} controlId="language">
-                            <Form.Label column sm="2">
+                            <Form.Label column sm="3">
                                 Language
                             </Form.Label>
-                            <Col sm="10">
+                            <Col sm="9">
                                 <Select options={languageOptions}
                                     value={languageOptions.find(x => x.value == this.state.newTerm.language)}
                                     onChange={(e) => this.handleNewTermLanguage(e.value)} />
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row} controlId="subject">
-                            <Form.Label column sm="2">
+                            <Form.Label column sm="3">
                                 AAT Term
                             </Form.Label>
-                            <Col sm="10">
+                            <Col sm="9">
                                 <AsyncSelect defaultValue={defaultValue} onChange={(e) => this.handleNewSubjectName(e)} loadOptions={this.promiseOptions} components={{ Option: CustomOption }} />
+                            </Col>
+                        </Form.Group>
+                        <Form.Group as={Row} controlId="startYear">
+                            <Form.Label column sm="3">
+                                Start Year
+                            </Form.Label>
+                            <Col sm="9">
+                                <Form.Control onChange={(e) => this.handleNewTermStartYear(e.target.value)} value={this.state.newTerm.starYear} placeholder='Add start year' />
+                            </Col>
+                        </Form.Group>
+                        <Form.Group as={Row} controlId="endYear">
+                            <Form.Label column sm="3">
+                                End Year
+                            </Form.Label>
+                            <Col sm="9">
+                                <Form.Control onChange={(e) => this.handleNewTermEndYear(e.target.value)} value={this.state.newTerm.endYear} placeholder='Add end year' />
                             </Col>
                         </Form.Group>
                     </Modal.Body>
