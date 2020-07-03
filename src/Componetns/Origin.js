@@ -39,9 +39,11 @@ export default function Origin(props) {
 
 
   useEffect(() => {
-    loadLanguages()
-    loadMappings()
-    loadEdmArchives()
+    if(isAuth) {
+      loadLanguages()
+      loadMappings()
+      loadEdmArchives()
+    }
   }, [])
 
 

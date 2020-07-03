@@ -3,8 +3,8 @@ import { fetchData, deleteData, addToast, getExcel, getFile, postData } from '..
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { TOAST } from '../../Resources'
 import { ENDPOINT, BASE_URL } from '../../config'
-import { Modal, Card, Row, Col, Table, Breadcrumb, Button, Container } from 'react-bootstrap'
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { Form, Modal, Card, Row, Col, Table, Breadcrumb, Button, Container } from 'react-bootstrap'
+import { faTrashAl, faArrowRight, faExchangeAlt } from '@fortawesome/free-solid-svg-icons'
 
 const archiveSchema = {
     createdAt: "",
@@ -36,7 +36,9 @@ export default function EdmArchive(props) {
     const [showModalDelete, setShowModalDelete] = useState(false)
     const archiveId = props.match.params.id
     const [archive, setArchive] = useState(archiveSchema)
-    
+    const [searchSubject, setSearchSubject] = useState('')
+    const [searchSpatial, setSearchSpatial] = useState('')
+    const [searchTemporal, setSearchTemporal] = useState('')
 
     useEffect(() => {
         /*
@@ -110,7 +112,14 @@ export default function EdmArchive(props) {
         const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/enrich`
         postData(url, {}, true, true)
         .then(data => {
-            ;
+            //console.log(data)
+            if(data.success) {
+                setArchive(prevArchive => ({
+                    ...prevArchive,
+                    enrichedFilename:data.enrichedArchiveName,
+                    enrichedFilepath:data.enrichedArchiveName
+                }))
+            }
         })
         .catch(() => addToast('Something went wrong', TOAST.ERROR))
     }
@@ -136,7 +145,31 @@ export default function EdmArchive(props) {
     }
     
 
+    const updateSearchSubject = (value) => {
+        setSearchSubject(value)
+    }
+    const updateSearchSpatial = (value) => {
+        setSearchSpatial(value)
+    }
+    const updateSearchTemporal = (value) => {
+        setSearchTemporal(value)
+    }
 
+    const getFilteredSubjects = () => {
+        return archiveTerms.subjectTermEntities.filter(term => {
+            return term.nativeTerm.toLowerCase().includes(searchSubject.toLowerCase())
+        })
+    }
+    const getFilteredSpatial = () => {
+        return archiveTerms.spatialTermEntities.filter(term => {
+            return term.nativeTerm.toLowerCase().includes(searchSpatial.toLowerCase())
+        })
+    }
+    const getFilteredTemporal = () => {
+        return archiveTerms.temporalTermEntities.filter(term => {
+            return term.nativeTerm.toLowerCase().includes(searchTemporal.toLowerCase())
+        })
+    }
 
     const handleCloseModalMappings = () => {
         setShowModalMappings(false)
@@ -159,7 +192,6 @@ export default function EdmArchive(props) {
         setShowModalDelete(true)
     }
 
-    
 
     const styles = {
         container: {
@@ -212,12 +244,19 @@ export default function EdmArchive(props) {
                     <Card style={styles.backMappings}>
                         <Card.Body>
                             <Card.Title className="text-center">Subject ({archiveTerms && archiveTerms.subjectTermEntities && archiveTerms.subjectTermEntities.length})</Card.Title>
+                            <Row>
+                                <Col sm="1"></Col>
+                                <Col sm="10">
+                                    <Form.Control onChange={(e) => updateSearchSubject(e.target.value)} value={searchSubject} placeholder='Search subject terms' />
+                                </Col> 
+                                <Col sm="1"></Col>
+                            </Row>
                             <hr/>
                             <div style={styles.tableCard}>
                             <Table>
                                 <tbody>  
-                                {archiveTerms && archiveTerms.subjectTermEntities && archiveTerms.subjectTermEntities.map((term,index)=> {
-                                    return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language && term.language}</td><td>{term.count && term.count}</td></tr>
+                                {archiveTerms && getFilteredSubjects().map((term,index)=> {
+                                    return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language && term.language}</td><td>{term.count && term.count}</td><td>{term.aatUid && <FontAwesomeIcon icon={faExchangeAlt} size={"sm"}/>}</td></tr>
                                 })}
                                 </tbody>
                             </Table>
@@ -236,12 +275,19 @@ export default function EdmArchive(props) {
                     <Card style={styles.backMappings}>
                         <Card.Body>
                             <Card.Title className="text-center">Spatial ({archiveTerms && archiveTerms.spatialTermEntities && archiveTerms.spatialTermEntities.length})</Card.Title>
+                            <Row>
+                                <Col sm="1"></Col>
+                                <Col sm="10">
+                                    <Form.Control onChange={(e) => updateSearchSpatial(e.target.value)} value={searchSpatial} placeholder='Search spatial terms' />
+                                </Col>
+                                <Col sm="1"></Col>
+                            </Row>                           
                             <hr/>
                             <div style={styles.tableCard}>
                             <Table>
                                 <tbody>  
-                                {archiveTerms && archiveTerms.spatialTermEntities && archiveTerms.spatialTermEntities.map((term,index)=> {
-                                    return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language && term.language}</td><td>{term.count && term.count}</td></tr>
+                                {archiveTerms && getFilteredSpatial().map((term,index)=> {
+                                    return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language && term.language}</td><td>{term.count && term.count}</td><td>{term.aatUid && <FontAwesomeIcon icon={faExchangeAlt} size={"sm"}/>}</td></tr>
                                 })}
                                 </tbody>
                             </Table>
@@ -260,12 +306,19 @@ export default function EdmArchive(props) {
                     <Card style={styles.backMappings}>
                         <Card.Body>
                             <Card.Title className="text-center">Temporal ({archiveTerms && archiveTerms.temporalTermEntities && archiveTerms.temporalTermEntities.length})</Card.Title>
+                            <Row>
+                                <Col sm="1"></Col>
+                                <Col sm="10">
+                                    <Form.Control onChange={(e) => updateSearchTemporal(e.target.value)} value={searchTemporal} placeholder='Search temporal terms' />
+                                </Col> 
+                                <Col sm="1"></Col>
+                            </Row>                            
                             <hr/>
                             <div style={styles.tableCard}>
                             <Table>
                                 <tbody>  
-                                    {archiveTerms && archiveTerms.temporalTermEntities && archiveTerms.temporalTermEntities.map((term,index)=> {
-                                        return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language && term.language}</td><td>{term.count && term.count}</td></tr>
+                                    {archiveTerms && getFilteredTemporal().map((term,index)=> {
+                                        return <tr key={index}><td>{term.nativeTerm}</td><td>{term.language && term.language}</td><td>{term.count && term.count}</td><td>{term.aatUid && <FontAwesomeIcon icon={faExchangeAlt} size={"sm"}/>}</td></tr>
                                     })}
                                 </tbody>
                             </Table>

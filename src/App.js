@@ -18,7 +18,6 @@ function App(props) {
   const [isAuth, setIsAuth] = useState(false)
   const [user, setUser] = useState(null)
 
-
   useEffect(() => {
     postData(ENDPOINT.AUTH.STATUS, [], false, false)
       .then(() => {
@@ -50,7 +49,8 @@ function App(props) {
       }).catch(() => {
         setIsAuth(false)
         setIsLoading(false)
-        // addToast('Invalid credentials', Resourses.TOAST.ERROR)
+        //const notify = () => toast("Invalid credentials");
+        addToast('Invalid credentials', Resourses.TOAST.ERROR)
       })
   }
 
@@ -99,6 +99,7 @@ function App(props) {
 
   );
 }
+
 
 const styles = {
   navBar: {
