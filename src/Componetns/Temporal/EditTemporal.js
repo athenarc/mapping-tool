@@ -18,7 +18,7 @@ const rowStyle = {
     borderBottom: "1px solid lightgrey"
 };
 
-  const containerStyle = {
+const containerStyle = {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
@@ -41,16 +41,16 @@ const CustomOption = props => {
 
     return (
         <div ref={innerRef} {...innerProps} style={myStyles}>
-        <div style={containerStyle}>
-          <div style={{ fontSize:'18px', paddingRight:'20px', marginRight: 8 }}>{props.data.label}</div>
-          <div className="sub" style={{ fontSize:'14px'}}>({props.data.startYear} - {props.data.endYear})</div>
+            <div style={containerStyle}>
+                <div style={{ fontSize:'18px', paddingRight:'20px', marginRight: 8 }}>{props.data.label}</div>
+                <div className="sub" style={{ fontSize:'14px'}}>({props.data.startYear} - {props.data.endYear})</div>
+            </div>
+            <div style={containerStyle}>
+                <div style={{ marginRight: 8 }}><a href={props.data.aatUri} target="_blank">AAT Ref</a></div>
+                <div style={{ marginRight: 8 }}>|</div>
+                <div style={{ marginRight: 8 }}><a href={props.data.wikidataUri} target="_blank">Wikidata Ref</a></div>
+            </div>
         </div>
-        <div style={containerStyle}>
-          <div style={{ marginRight: 8 }}><a href={props.data.aatUri} target="_blank">AAT Ref</a></div>
-          <div style={{ marginRight: 8 }}>|</div>
-          <div style={{ marginRight: 8 }}><a href={props.data.wikidataUri} target="_blank">Wikidata Ref</a></div>
-        </div>
-      </div>
     );
 };
 
@@ -72,6 +72,7 @@ export default class EditTemporal extends Component {
     }
     state = {
         mappingTerms: [],
+        editingIndex: 0,
         languages: [],
         isLoading: false,
         showModal: false,
@@ -308,22 +309,7 @@ export default class EditTemporal extends Component {
 
     handleChangeTerm(delta, index) {
         this.setState({
-            mappingTerms: this.state.mappingTerms.map((m, i) => {
-                if (i === index) {
-                    return {
-                        ...m,
-                        nativeTerm: delta.target.value
-                    }
-                }
-                return m
-            })
-        })
-
-    }
-
-
-    handleChangeLanguage(delta, index) {
-        this.setState({
+            editingIndex: index,
             mappingTerms: this.state.mappingTerms.map((m, i) => {
                 if (i === index) {
                     return {
@@ -339,6 +325,7 @@ export default class EditTemporal extends Component {
 
     handleChangeStartYear(delta, index) {
         this.setState({
+            editingIndex: index,
             mappingTerms: this.state.mappingTerms.map((m, i) => {
                 if (i === index) {
                     return {
@@ -354,6 +341,7 @@ export default class EditTemporal extends Component {
 
     handleChangeEndYear(delta, index) {
         this.setState({
+            editingIndex: index,
             mappingTerms: this.state.mappingTerms.map((m, i) => {
                 if (i === index) {
                     return {
@@ -408,6 +396,19 @@ export default class EditTemporal extends Component {
         this.loadMappingMetadata()
     }
 
+    UNSAFE_componentWillUpdate(nextProps, nextState) {
+        if (this.state.mappingTerms.length === nextState.mappingTerms.length) {
+            const currentStateStr = JSON.stringify(this.state.mappingTerms)
+            const nextStateStr = JSON.stringify(nextState.mappingTerms)
+            if (currentStateStr !== nextStateStr) {
+                // console.log("Update at index ", nextState.editingIndex)
+                const mappingId = this.props.match.params.id
+                const term = nextState.mappingTerms[nextState.editingIndex]
+                const url = `${ENDPOINT.MAPPINGS}/${mappingId}/temporal_terms/${term.id}`
+                updateData(url, term).catch((ex) => console.log(ex))
+            }
+        }
+    }
 
     componentWillUnmount() {
         this._isMounted = false;
@@ -416,6 +417,7 @@ export default class EditTemporal extends Component {
 
     handleEditConceptLabel(editTerm, index) {
         this.setState({
+            editingIndex: index,
             mappingTerms: [
                 ...this.state.mappingTerms.map((term, i) => {
                     if (index === i) {
@@ -433,6 +435,7 @@ export default class EditTemporal extends Component {
 
     handleChangeLanguage(language, index) {
         this.setState({
+            editingIndex: index,
             mappingTerms: [
                 ...this.state.mappingTerms.map((term, i) => {
                     if (index === i) {
@@ -487,16 +490,16 @@ export default class EditTemporal extends Component {
                 </td>
                 <td>
                     <Select options={languageOptions}
-                        value={languageOptions.find(x => x.value == term.language)}
-                        onChange={(e) => this.handleChangeLanguage(e.value, index)} />
+                            value={languageOptions.find(x => x.value == term.language)}
+                            onChange={(e) => this.handleChangeLanguage(e.value, index)} />
                 </td>
                 <td style={{minWidth:"240px"}}>
                     <AsyncSelect
-                    defaultValue={defaultValue}
-                    size="15"
-                    onChange={(e) => this.handleEditConceptLabel(e, index)}
-                    loadOptions={this.promiseOptions} 
-                    components={{ Option: CustomOption }} />
+                        defaultValue={defaultValue}
+                        size="15"
+                        onChange={(e) => this.handleEditConceptLabel(e, index)}
+                        loadOptions={this.promiseOptions}
+                        components={{ Option: CustomOption }} />
                 </td>
                 <td><Form.Control
                     value={term.startYear ? term.startYear : ''}
@@ -509,13 +512,13 @@ export default class EditTemporal extends Component {
                     onChange={(e) => this.handleChangeEndYear(e, index)} />
                 </td>
                 <td>
-                    <Button
+                    {/* <Button
                         variant="success"
                         className="mx-1"
                         disabled={!term.earchTemporalLabel || !term.nativeTerm}
                         onClick={() => this.handleUpdateTerm(term.id)}>
                         <FontAwesomeIcon icon="save" />
-                    </Button>
+                    </Button> */}
                     <Button
                         variant="danger"
                         className="mx-1"
@@ -577,21 +580,21 @@ export default class EditTemporal extends Component {
                 </Breadcrumb>
                 <Table>
                     <thead>
-                        <tr>
-                            <th>Term</th>
-                            <th>Language</th>
-                            <th>AAT Term</th>
-                            <th>Start Year</th>
-                            <th>End Year</th>
-                            <th>
-                                <Button variant="success" onClick={() => this.handleShowModal()}>Create</Button> &nbsp;
-                                <Button variant="primary" onClick={() => this.handleShowModalDrop()}><FontAwesomeIcon icon="upload" size={'sm'} /></Button> &nbsp;
-                                {/*<Button variant="primary" onClick={() => this.handleShowModalDropEDM()}><FontAwesomeIcon icon="upload" size={'sm'} /> EDM</Button>*/}
-                            </th>
-                        </tr>
+                    <tr>
+                        <th>Term</th>
+                        <th>Language</th>
+                        <th>AAT Term</th>
+                        <th>Start Year</th>
+                        <th>End Year</th>
+                        <th>
+                            <Button variant="success" onClick={() => this.handleShowModal()}>Create</Button> &nbsp;
+                            <Button variant="primary" onClick={() => this.handleShowModalDrop()}><FontAwesomeIcon icon="upload" size={'sm'} /></Button> &nbsp;
+                            {/*<Button variant="primary" onClick={() => this.handleShowModalDropEDM()}><FontAwesomeIcon icon="upload" size={'sm'} /> EDM</Button>*/}
+                        </th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {result}
+                    {result}
                     </tbody>
                 </Table>
 
@@ -614,8 +617,8 @@ export default class EditTemporal extends Component {
                             </Form.Label>
                             <Col sm="9">
                                 <Select options={languageOptions}
-                                    value={languageOptions.find(x => x.value == this.state.newTerm.language)}
-                                    onChange={(e) => this.handleNewTermLanguage(e.value)} />
+                                        value={languageOptions.find(x => x.value == this.state.newTerm.language)}
+                                        onChange={(e) => this.handleNewTermLanguage(e.value)} />
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row} controlId="subject">
@@ -646,12 +649,12 @@ export default class EditTemporal extends Component {
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleCloseModal}>
                             Close
-                    </Button>
+                        </Button>
                         <Button variant="primary"
-                            disabled={!this.state.newTerm.earchTemporalLabel || !this.state.newTerm.nativeTerm}
-                            onClick={onSave}>
+                                disabled={!this.state.newTerm.earchTemporalLabel || !this.state.newTerm.nativeTerm}
+                                onClick={onSave}>
                             Save Changes
-                    </Button>
+                        </Button>
                     </Modal.Footer>
                 </Modal>
 
@@ -661,10 +664,10 @@ export default class EditTemporal extends Component {
                     </Modal.Header>
                     <Modal.Body>
                         <Dropzone className={`Dropzone ${this.state.highlight ? 'Highlight' : ''}`}
-                            onDrop={this.onDrop}
-                            onDragOver={this.onDragOver}
-                            onDragLeave={this.onDragLeave}
-                            style={{ cursor: this.props.disabled ? 'default' : 'pointer' }} >
+                                  onDrop={this.onDrop}
+                                  onDragOver={this.onDragOver}
+                                  onDragLeave={this.onDragLeave}
+                                  style={{ cursor: this.props.disabled ? 'default' : 'pointer' }} >
                             {({ getRootProps, getInputProps }) => (
                                 <section>
                                     <div {...getRootProps()}>
@@ -678,7 +681,7 @@ export default class EditTemporal extends Component {
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleCloseModalDrop}>
                             Close
-                    </Button>
+                        </Button>
                     </Modal.Footer>
                 </Modal>
 
@@ -689,10 +692,10 @@ export default class EditTemporal extends Component {
                     </Modal.Header>
                     <Modal.Body>
                         <Dropzone className={`Dropzone ${this.state.highlight ? 'Highlight' : ''}`}
-                            onDrop={this.onDropEDM}
-                            onDragOver={this.onDragOverEDM}
-                            onDragLeave={this.onDragLeaveEDM}
-                            style={{ cursor: this.props.disabled ? 'default' : 'pointer' }} >
+                                  onDrop={this.onDropEDM}
+                                  onDragOver={this.onDragOverEDM}
+                                  onDragLeave={this.onDragLeaveEDM}
+                                  style={{ cursor: this.props.disabled ? 'default' : 'pointer' }} >
                             {({ getRootProps, getInputProps }) => (
                                 <section>
                                     <div {...getRootProps()}>
@@ -706,7 +709,7 @@ export default class EditTemporal extends Component {
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleCloseModalDropEDM}>
                             Close
-                    </Button>
+                        </Button>
                     </Modal.Footer>
                 </Modal>
 
@@ -725,7 +728,7 @@ export default class EditTemporal extends Component {
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleCloseModalEnrich}>
                             Close
-                    </Button>
+                        </Button>
                     </Modal.Footer>
                 </Modal>
 
@@ -788,10 +791,10 @@ export default class EditTemporal extends Component {
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleCloseModalDelete}>
                             Close
-                    </Button>
+                        </Button>
                         <Button variant="danger" onClick={() => onDeleteMapping()}>
                             Delete
-                    </Button>
+                        </Button>
                     </Modal.Footer>
                 </Modal>
 

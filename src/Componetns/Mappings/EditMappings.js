@@ -30,6 +30,7 @@ export default class EditMappings extends Component {
     }
     state = {
         mappingTerms: [],
+        editingIndex: 0,
         languages: [],
         isLoading: false,
         showModal: false,
@@ -245,6 +246,7 @@ export default class EditMappings extends Component {
 
     handleChangeTerm(delta, index) {
         this.setState({
+            editingIndex: index,
             mappingTerms: this.state.mappingTerms.map((m, i) => {
                 if (i === index) {
                     return {
@@ -258,21 +260,6 @@ export default class EditMappings extends Component {
 
     }
 
-
-    handleChangeLanguage(delta, index) {
-        this.setState({
-            mappingTerms: this.state.mappingTerms.map((m, i) => {
-                if (i === index) {
-                    return {
-                        ...m,
-                        nativeTerm: delta.target.value
-                    }
-                }
-                return m
-            })
-        })
-
-    }
 
 
 
@@ -315,6 +302,19 @@ export default class EditMappings extends Component {
         this.loadMappingMetadata()
     }
 
+    UNSAFE_componentWillUpdate(nextProps, nextState) {
+        if (this.state.mappingTerms.length === nextState.mappingTerms.length) {
+            const currentStateStr = JSON.stringify(this.state.mappingTerms)
+            const nextStateStr = JSON.stringify(nextState.mappingTerms)
+            if (currentStateStr !== nextStateStr) {
+                // console.log("Update at index ", nextState.editingIndex)
+                const mappingId = this.props.match.params.id
+                const term = nextState.mappingTerms[nextState.editingIndex]
+                const url = `${ENDPOINT.MAPPINGS}/${mappingId}/terms/${term.id}`
+                updateData(url, term).catch((ex) => console.log(ex))
+            }
+        }
+    }
 
     componentWillUnmount() {
         this._isMounted = false;
@@ -323,6 +323,7 @@ export default class EditMappings extends Component {
 
     handleEditConceptLabel(editTerm, index) {
         this.setState({
+            editingIndex: index,
             mappingTerms: [
                 ...this.state.mappingTerms.map((term, i) => {
                     if (index === i) {
@@ -340,6 +341,7 @@ export default class EditMappings extends Component {
 
     handleChangeLanguage(language, index) {
         this.setState({
+            editingIndex: index,
             mappingTerms: [
                 ...this.state.mappingTerms.map((term, i) => {
                     if (index === i) {
@@ -406,13 +408,13 @@ export default class EditMappings extends Component {
                     loadOptions={this.promiseOptions} />
                 </td>
                 <td>
-                    <Button
+                    {/* <Button
                         variant="success"
                         className="mx-1"
                         disabled={!term.aatConceptLabel || !term.nativeTerm}
                         onClick={() => this.handleUpdateTerm(term.id)}>
                         <FontAwesomeIcon icon="save" />
-                    </Button>
+                    </Button> */}
                     <Button
                         variant="danger"
                         className="mx-1"
