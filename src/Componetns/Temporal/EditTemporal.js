@@ -22,7 +22,7 @@ const containerStyle = {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    height: 40
+    height: 40,
 };
 
 const CustomOption = props => {
@@ -36,19 +36,19 @@ const CustomOption = props => {
     }
     const myStyles = {
         ...rowStyle,
-        backgroundColor
+        backgroundColor,
     };
 
     return (
         <div ref={innerRef} {...innerProps} style={myStyles}>
             <div style={containerStyle}>
-                <div style={{ fontSize:'18px', paddingRight:'20px', marginRight: 8 }}>{props.data.label}</div>
-                <div className="sub" style={{ fontSize:'14px'}}>({props.data.startYear} - {props.data.endYear})</div>
+                <div style={{ fontSize:'14px', paddingRight:'20px', marginRight: 8 }}>{props.data.label}</div>
+                <div className="sub" style={{ fontSize:'12px'}}>({props.data.startYear} - {props.data.endYear})</div>
             </div>
             <div style={containerStyle}>
-                <div style={{ marginRight: 8 }}><a href={props.data.aatUri} target="_blank">AAT Ref</a></div>
-                <div style={{ marginRight: 8 }}>|</div>
-                <div style={{ marginRight: 8 }}><a href={props.data.wikidataUri} target="_blank">Wikidata Ref</a></div>
+                <div style={{ marginRight: 8, fontSize:'12px' }}><a href={props.data.aatUri} target="_blank">AAT Ref</a></div>
+                <div style={{ marginRight: 8, fontSize:'12px' }}>|</div>
+                <div style={{ marginRight: 8, fontSize:'12px' }}><a href={props.data.wikidataUri} target="_blank">Wikidata Ref</a></div>
             </div>
         </div>
     );
@@ -261,6 +261,8 @@ export default class EditTemporal extends Component {
             newTerm: {
                 ...this.state.newTerm,
                 earchTemporalLabel: term.label,
+                startYear: term.startYear,
+                endYear: term.endYear,
                 aatUid: term.aatUid
             }
         })
@@ -496,7 +498,7 @@ export default class EditTemporal extends Component {
                 <td style={{minWidth:"240px"}}>
                     <AsyncSelect
                         defaultValue={defaultValue}
-                        size="15"
+                        size="20"
                         onChange={(e) => this.handleEditConceptLabel(e, index)}
                         loadOptions={this.promiseOptions}
                         components={{ Option: CustomOption }} />
@@ -634,7 +636,7 @@ export default class EditTemporal extends Component {
                                 Start Year
                             </Form.Label>
                             <Col sm="9">
-                                <Form.Control onChange={(e) => this.handleNewTermStartYear(e.target.value)} value={this.state.newTerm.starYear} placeholder='Add start year' />
+                                <Form.Control onChange={(e) => this.handleNewTermStartYear(e.target.value)} value={this.state.newTerm.startYear} placeholder='Add start year' />
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row} controlId="endYear">

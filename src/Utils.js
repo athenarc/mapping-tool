@@ -40,7 +40,7 @@ export const fetchData = (url, readJson = true, bearer = true) => {
         })
 }
 
-export const post = (url, data, method = 'POST', readJson = true, bearer = true) => {
+export const post1 = (url, data, method = 'POST', readJson = true, bearer = true) => {
 
     const options = {
         method: method,
@@ -57,6 +57,30 @@ export const post = (url, data, method = 'POST', readJson = true, bearer = true)
         })
 }
 
+export const post = (url, data, method = "POST", readJson = true) => {
+    const options = {
+      method: method,
+      mode: "cors",
+      body: JSON.stringify(data),
+      headers: getDefaultHeaders()
+    };
+    return fetch(url, options)
+      .then(response => {
+        if (response.ok) {
+          return readJson ? response.json() : response;
+        } else if (response.status < 500) {
+          return response.json();
+        }
+        throw new HttpRequestException("Unknown Error", response.status);
+      })
+      .then(object => {
+        if (object.message && object.error) {
+          throw new HttpRequestException(object);
+        } else {
+          return object;
+        }
+      });
+  };
 
 
 export const postUpload = (url, data, readJson = true) => {
@@ -162,3 +186,13 @@ export const getFile = (url, data, filename) => {
         });
 
 }
+
+class HttpRequestException {
+    constructor(err) {
+      this.timestamp = err.timestamp;
+      this.status = err.status;
+      this.error = err.error;
+      this.message = err.message;
+      this.path = err.path;
+    }
+  }

@@ -5,6 +5,8 @@ import { TOAST } from '../../Resources'
 import { ENDPOINT, BASE_URL } from '../../config'
 import { Form, Modal, Card, Row, Col, Table, Breadcrumb, Button, Container } from 'react-bootstrap'
 import { faTrashAl, faArrowRight, faExchangeAlt } from '@fortawesome/free-solid-svg-icons'
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
+import Loader from 'react-loader-spinner';
 
 const archiveSchema = {
     createdAt: "",
@@ -39,6 +41,24 @@ export default function EdmArchive(props) {
     const [searchSubject, setSearchSubject] = useState('')
     const [searchSpatial, setSearchSpatial] = useState('')
     const [searchTemporal, setSearchTemporal] = useState('')
+
+    const LoadingIndicator = props => {
+        const { promiseInProgress } = usePromiseTracker();
+        return (
+            promiseInProgress && 
+            <div
+                style={{
+                    width: "100%",
+                    height: "100",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}
+            >
+            <Loader type="ThreeDots" color="#2BAD60" height="100" width="100" />
+            </div>
+        );  
+    }
 
     useEffect(() => {
         /*
@@ -110,18 +130,24 @@ export default function EdmArchive(props) {
 
     const enrichArchive = () => {
         const url = `${ENDPOINT.EDM_ARCHIVES}/${archiveId}/enrich`
-        postData(url, {}, true, true)
-        .then(data => {
-            //console.log(data)
-            if(data.success) {
-                setArchive(prevArchive => ({
-                    ...prevArchive,
-                    enrichedFilename:data.enrichedArchiveName,
-                    enrichedFilepath:data.enrichedArchiveName
-                }))
-            }
-        })
-        .catch(() => addToast('Something went wrong', TOAST.ERROR))
+        let resStatus = 0
+        trackPromise(
+            postData(url, {}, true, true)
+            .then(data => {
+                //console.log(data)
+                if(data.success) {
+                    setArchive(prevArchive => ({
+                        ...prevArchive,
+                        enrichedFilename:data.enrichedArchiveName,
+                        enrichedFilepath:data.enrichedArchiveName
+                    }))
+                }
+            })
+            .then((res) => {
+                console.log(res);
+             })
+            .catch(ex => addToast(ex.message, TOAST.ERROR))
+        )
     }
 
     const saveExtractedTerms = () => {
@@ -233,6 +259,7 @@ export default function EdmArchive(props) {
                             <Button size={'sm'} onClick={() => enrichArchive()} className="ml-3"><FontAwesomeIcon icon="save" size={'sm'} /> Enrich Archive</Button>
                             <Button size={'sm'} disabled={archive && !archive.enrichedFilepath} onClick={() => downloadEnrichedArchive()} className="ml-3"><FontAwesomeIcon icon="download" size={'sm'} /> Download Enriched</Button>
                             <Button variant="danger" size={'sm'} onClick={() => handleShowModalDelete()} className="ml-3"><FontAwesomeIcon icon="trash-alt" size={'sm'} /> Delete Archive</Button>
+                            <LoadingIndicator/>
                         </Card.Footer>
                     </Card>
                 </Col>
@@ -371,7 +398,6 @@ export default function EdmArchive(props) {
                     </Button>
                     </Modal.Footer>
                 </Modal>
-
 
         </React.Fragment> 
         </div>

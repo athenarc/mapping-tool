@@ -14,6 +14,8 @@ import { fetchData, addToast, postData, postUpload } from '../../Utils';
 import { ENDPOINT } from '../../config'
 import { TOAST } from '../../Resources';
 import { noAuto } from '@fortawesome/fontawesome-svg-core';
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
+import Loader from 'react-loader-spinner';
 
 function Home(props) {
 
@@ -25,6 +27,25 @@ function Home(props) {
     const [highlight, setHighlight] = useState(true)
     const [isMounted, setIsMounted] = useState(false)
     const [showModalDropEDM, setShowModalDropEDM] = useState(false)
+
+
+    const LoadingIndicator = props => {
+        const { promiseInProgress } = usePromiseTracker();
+        return (
+            promiseInProgress && 
+            <div
+                style={{
+                    width: "100%",
+                    height: "100",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}
+            >
+            <Loader type="ThreeDots" color="#2BAD60" height="100" width="100" />
+            </div>
+        );  
+    }
 
     useEffect(() => {
         
@@ -53,15 +74,15 @@ function Home(props) {
         files.forEach(file => {
             data.append('file', file, file.name)
         });
-
-        postUpload(`${ENDPOINT.EDM_ARCHIVES_UPLOAD}`, data, true)
+        trackPromise(
+            postUpload(`${ENDPOINT.EDM_ARCHIVES_UPLOAD}`, data, true)
             .then( (data) => {
                 extractTerms(data.id)
                 props.loadEdmArchives() 
             })
             .catch(() => addToast('Failed to upload', TOAST.ERROR))
+        )
         handleCloseModalDropEDM()
-
     }
 
     const onDragOverEDM = (evt) => {
@@ -100,7 +121,7 @@ function Home(props) {
                         <Button variant="primary" className="pull-right" onClick={() => handleShowModalDropEDM()}><FontAwesomeIcon icon="upload" size={'sm'} /> EDM</Button>
                 </Card.Title>
                 <Card.Body style={styles.backEDMUploadsBody}>
-
+                    <LoadingIndicator/>
                     {edmArchivesCards}
                     
                 </Card.Body>
