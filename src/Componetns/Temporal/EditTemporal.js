@@ -426,41 +426,14 @@ export default class EditTemporal extends Component {
                         return {
                             ...term,
                             earchTemporalLabel: editTerm.label,
-                            aatUid: editTerm.aatUid
+                            aatUid: editTerm.aatUid,
+                            startYear: editTerm.startYear,
+                            endYear: editTerm.endYear
                         }
                     }
                     return term
                 })
             ]
-        })
-
-        console.log(editTerm.startYear)
-        console.log(editTerm.endYear)
-        
-        this.setState({
-            editingIndex: index,
-            mappingTerms: this.state.mappingTerms.map((m, i) => {
-                if (i === index) {
-                    return {
-                        ...m,
-                        startYear: editTerm.startYear
-                    }
-                }
-                return m
-            })
-        })
-
-        this.setState({
-            editingIndex: index,
-            mappingTerms: this.state.mappingTerms.map((m, i) => {
-                if (i === index) {
-                    return {
-                        ...m,
-                        endYear: editTerm.endYear
-                    }
-                }
-                return m
-            })
         })
 
     }
