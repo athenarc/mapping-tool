@@ -68,6 +68,8 @@ export const post = (url, data, method = "POST", readJson = true) => {
       .then(response => {
         if (response.ok) {
           return readJson ? response.json() : response;
+        } else if (response.status == 403) {
+            clearToken();
         } else if (response.status < 500) {
           return response.json();
         }
@@ -113,6 +115,10 @@ const getCredential = (prop) => {
     const parseData = JSON.parse(credentials)
     if (!parseData) return null
     return prop ? parseData[prop] : parseData
+}
+
+const clearToken = () => {
+    const credentials = localStorage.setItem('europeana_mapping_credentials',null)
 }
 
 export const requestAccess = (url, data, credentials) => {
